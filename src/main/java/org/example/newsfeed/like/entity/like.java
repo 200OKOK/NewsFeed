@@ -1,4 +1,4 @@
-package org.example.newsfeed.story.entity;
+package org.example.newsfeed.like.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Story {
+public class like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
