@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Tablelike {
+public class Feedlike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +25,12 @@ public class Tablelike {
     @JoinColumn(name = "feedId", nullable = false)
     private Feed feed;
 
-    private LocalDateTime createAt;
+    private LocalDateTime createAt = LocalDateTime.now();
+
+    public Feedlike(User user, Feed feed) {
+        this.user = user;
+        this.feed = feed;
+    }
+
+
 }
