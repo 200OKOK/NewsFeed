@@ -16,4 +16,20 @@ public class Follow {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "followingId")
+    private User following;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "followerId")
+    private User follower;
+
+    private LocalDateTime createAt;
+
+    public Follow(User follower, User following) {
+        this.follower = follower;
+        this.following = following;
+    }
+
+
 }
