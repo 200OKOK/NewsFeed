@@ -10,10 +10,18 @@ import lombok.NoArgsConstructor;
 
 public class Feed {
 
+@Table(name = "feeds")
+public class Feed extends BaseEntity{
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     private Long feedId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "title", nullable = false)
     private String title;
