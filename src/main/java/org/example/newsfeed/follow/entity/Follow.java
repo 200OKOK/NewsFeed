@@ -3,7 +3,6 @@ package org.example.newsfeed.follow.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -30,5 +29,6 @@ public class Follow {
         this.follower = follower;
         this.following = following;
     }
+
 
 }

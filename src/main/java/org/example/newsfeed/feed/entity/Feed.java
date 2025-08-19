@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.newsfeed.common.BaseEntity;
+
 import org.example.newsfeed.user.entity.User;
 
 @Getter
 @Entity
 @NoArgsConstructor
+
 @Table(name = "feeds")
 public class Feed extends BaseEntity {
 
@@ -32,6 +34,4 @@ public class Feed extends BaseEntity {
         this.title = title;
         this.content = content;
     }
-
 }
-
