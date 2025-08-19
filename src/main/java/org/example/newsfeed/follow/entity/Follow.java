@@ -21,9 +21,22 @@ public class Follow {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "followingId")
+    private User following;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "followerId")
+    private User follower;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "feedId", nullable = false)
     private Feed feed;
 
     private LocalDateTime createAt;
+
+    public Follow(User follower, User following) {
+        this.follower = follower;
+        this.following = following;
+    }
 
 }
