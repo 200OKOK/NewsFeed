@@ -2,10 +2,7 @@ package org.example.newsfeed.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.user.config.PasswordEncoder;
-import org.example.newsfeed.user.dto.PasswordUpdate;
-import org.example.newsfeed.user.dto.UserRequest;
-import org.example.newsfeed.user.dto.UserResponse;
-import org.example.newsfeed.user.dto.UserUpdate;
+import org.example.newsfeed.user.dto.*;
 import org.example.newsfeed.user.entity.User;
 import org.example.newsfeed.user.entity.UserStatus;
 import org.example.newsfeed.user.repository.UserRepository;
@@ -99,12 +96,12 @@ public class UserService {
 
     // 로그인
     @Transactional(readOnly = true)
-    public UserResponse login(UserRequest userRequest) {
-        User user = userRepository.findByUserId(userRequest.getUserId()).orElseThrow(
+    public UserResponse login(UserLoginRequest loginRequest) {
+        User user = userRepository.findByUserId(loginRequest.getUserId()).orElseThrow(
                 () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
         );
 
-        if (!passwordEncoder.matches(userRequest.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         return new UserResponse(

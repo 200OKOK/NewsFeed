@@ -52,10 +52,10 @@ public class UserController {
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<String> login(
-            @RequestBody UserRequest userRequest,
+            @RequestBody UserLoginRequest loginRequest,
             HttpServletRequest request
     ) {
-        UserResponse result = userService.login(userRequest);
+        UserResponse result = userService.login(loginRequest);
 
         HttpSession session = request.getSession();
         session.setAttribute("로그인 유저", result.getId());
