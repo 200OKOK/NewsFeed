@@ -80,6 +80,11 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
+        if(userRepository.existsByNickName(request.getNickName())) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        }
+
+
         String encodedPw = passwordEncoder.encode(request.getPassword());
 
         User user = new User(
