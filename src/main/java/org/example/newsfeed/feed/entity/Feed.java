@@ -7,8 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
+
+public class Feed {
+
 @Table(name = "feeds")
 public class Feed extends BaseEntity{
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
