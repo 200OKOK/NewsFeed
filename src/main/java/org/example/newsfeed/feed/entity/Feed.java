@@ -3,15 +3,14 @@ package org.example.newsfeed.feed.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.newsfeed.user.entity.User;
 
 @Getter
 @Entity
 @NoArgsConstructor
 
+//@Table(name = "feeds")
 public class Feed {
-
-@Table(name = "feeds")
-public class Feed extends BaseEntity{
 
 
     @Id
