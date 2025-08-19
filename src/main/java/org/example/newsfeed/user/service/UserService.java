@@ -108,4 +108,18 @@ public class UserService {
                 user.getNickName()
         );
     }
+
+    // 회원 삭제
+    @Transactional
+    public void deleteuser(String userId, String password) {
+        User user = userRepository.findByUserId(userId).orElseThrow(
+                () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
+        );
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지않습니다.");
+        }
+
+        user.deleteUser();
+    }
 }

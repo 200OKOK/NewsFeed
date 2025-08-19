@@ -74,4 +74,14 @@ public class UserController {
         }
         return ResponseEntity.ok("로그아웃 합니다.");
     }
+
+    // 회원 탈퇴
+    @DeleteMapping
+    public ResponseEntity<String> deletUser(
+            @RequestBody String userId,
+            @RequestBody String password
+    ) {
+        userService.deleteuser(userId, password);
+        return ResponseEntity.ok("계정을 탈퇴하셨습니다");
+    }
 }
