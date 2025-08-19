@@ -17,20 +17,12 @@ public class Follow {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userId")
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "followingId")
     private User following;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "followerId")
     private User follower;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "feedId", nullable = false)
-    private Feed feed;
 
     private LocalDateTime createAt;
 
