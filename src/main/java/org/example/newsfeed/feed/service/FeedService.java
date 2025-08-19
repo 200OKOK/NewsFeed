@@ -1,4 +1,96 @@
 package org.example.newsfeed.feed.service;
 
+import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.feed.dto.*;
+import org.example.newsfeed.feed.entity.Feed;
+import org.example.newsfeed.feed.repository.FeedRepository;
+import org.example.newsfeed.user.entity.User;
+import org.example.newsfeed.user.entity.UserStatus;
+import org.example.newsfeed.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
 public class FeedService {
+
+    private final FeedRepository feedRepository;
+    private final UserRepository userRepository;
+
+    // 게시글 생성
+    @Transactional
+    public FeedSaveResponseDto save(Long userId, FeedSaveRequestDto dto) {
+        User user = getActiveUser(userId);
+        Feed feed = new Feed(user, dto.getTitle(), dto.getContent());
+        feedRepository.save(feed);
+
+        return new FeedSaveResponseDto(
+                feed.getFeedId(),
+                user.getUserId(),
+                feed.getTitle(),
+                feed.getContent(),
+                feed.getCreatedAt(),
+                feed.getUpdatedAt()
+        );
+    }
+
+    // 게시글 전체 조회
+    @Transactional(readOnly = true)
+    public List<FeedResponseDto> findAll() {
+        return feedRepository.findAll().stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getFeedId(),
+                        feed.getUser().getUserId(), // 이메일
+                        feed.getTitle(),
+                        feed.getContent(),
+                        feed.getCreatedAt(),
+                        feed.getUpdatedAt()))
+                .collect(Collectors.toList());
+    }
+
+    // 게시글 수정
+    @Transactional
+    public FeedUpdateResponseDto update(Long feedId, Long userId, FeedUpdateRequestDto dto) {
+        User user = getActiveUser(userId);
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 없습니다."));
+
+        if (!user.getId().equals(feed.getUser().getId())) {
+            throw new IllegalArgumentException("본인이 작성한 게시물만 수정할 수 있습니다.");
+        }
+
+        feed.update(dto.getTitle(), dto.getContent());
+        return new FeedUpdateResponseDto(
+                feed.getFeedId(),
+                feed.getUser().getUserId(),
+                feed.getTitle(),
+                feed.getContent(),
+                feed.getCreatedAt(),
+                feed.getUpdatedAt()
+        );
+    }
+
+    // 게시글 삭제
+    @Transactional
+    public void deleteById(Long feedId, Long userId) {
+        User user = getActiveUser(userId);
+        Feed feed = feedRepository.findById(feedId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+
+        if (!user.getId().equals(feed.getUser().getId())) {
+            throw new IllegalArgumentException("작성자만 게시물을 삭제할 수 있습니다.");
+        }
+
+        feedRepository.delete(feed);
+    }
+
+    // 사용자 검증 메서드
+    private User getActiveUser(Long userId) {
+        return userRepository.findById(userId)
+                .filter(user -> user.getStatus() == UserStatus.ACTIVE)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않거나 탈퇴한 사용자입니다."));
+    }
 }

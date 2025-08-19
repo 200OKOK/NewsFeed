@@ -20,8 +20,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status = UserStatus.ACTIVE;
 
     public User(String userId, String userName, String password, String nickName) {
         this.userId = userId;
@@ -37,5 +41,9 @@ public class User {
     public void updateProfile(String userName,String nickname) {
         this.userName = userName;
         this.nickName = nickname;
+    }
+
+    public void deleteUser() {
+        this.status = UserStatus.DELETED;
     }
 }
