@@ -7,6 +7,7 @@ import org.example.newsfeed.user.dto.UserRequest;
 import org.example.newsfeed.user.dto.UserResponse;
 import org.example.newsfeed.user.dto.UserUpdate;
 import org.example.newsfeed.user.entity.User;
+import org.example.newsfeed.user.entity.UserStatus;
 import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,8 +99,8 @@ public class UserService {
                 () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
         );
 
-        if (!user.getPassword().equals(userRequest.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지않습니다.");
+        if (!passwordEncoder.matches(userRequest.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         return new UserResponse(
                 user.getId(),
@@ -115,6 +116,10 @@ public class UserService {
         User user = userRepository.findByUserId(userId).orElseThrow(
                 () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
         );
+
+        if(user.getStatus() == UserStatus.DELETED) {
+            throw new IllegalArgumentException("이미 탈퇴한 계정입니다.");
+        }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지않습니다.");
