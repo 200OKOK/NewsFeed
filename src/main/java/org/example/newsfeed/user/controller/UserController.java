@@ -3,11 +3,9 @@ package org.example.newsfeed.user.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.example.newsfeed.user.dto.PasswordUpdate;
-import org.example.newsfeed.user.dto.UserRequest;
-import org.example.newsfeed.user.dto.UserResponse;
-import org.example.newsfeed.user.dto.UserUpdate;
+import org.example.newsfeed.user.dto.*;
 import org.example.newsfeed.user.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +63,7 @@ public class UserController {
         return ResponseEntity.ok("로그인에 성공하셨습니다.");
     }
 
+    // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -77,11 +76,10 @@ public class UserController {
 
     // 회원 탈퇴
     @DeleteMapping
-    public ResponseEntity<String> deletUser(
-            @RequestBody String userId,
-            @RequestBody String password
+    public ResponseEntity<String> deleteUser(
+            @RequestBody UserDeleteRequest request
     ) {
-        userService.deleteuser(userId, password);
-        return ResponseEntity.ok("계정을 탈퇴하셨습니다");
+        userService.deleteuser(request.getUserId(), request.getPassword());
+        return ResponseEntity.ok("계정을 탈퇴하셨습니다.");
     }
 }
