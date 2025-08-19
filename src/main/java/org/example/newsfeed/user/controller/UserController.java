@@ -64,4 +64,14 @@ public class UserController {
         session.setAttribute("로그인 유저", result.getId());
         return ResponseEntity.ok("로그인에 성공하셨습니다.");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.ok("로그아웃 합니다.");
+    }
 }
