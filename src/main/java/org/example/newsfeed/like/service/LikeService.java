@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.feed.repository.FeedRepository;
 import org.example.newsfeed.like.dto.CreateFeedLikeResp;
+import org.example.newsfeed.like.dto.GetFeedLikeCountResp;
 import org.example.newsfeed.like.entity.Feedlike;
 import org.example.newsfeed.like.repository.TableLikeRepository;
 import org.example.newsfeed.user.entity.User;
@@ -40,5 +41,10 @@ public class LikeService {
               return null;
         }
 
+    }
+
+    public GetFeedLikeCountResp feedLikeCount(Long feedId) {
+        int count = tableLikeRepository.countFeedByFeed_FeedId(feedId);
+        return new GetFeedLikeCountResp(feedId,count);
     }
 }
