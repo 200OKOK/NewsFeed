@@ -16,14 +16,4 @@ public class Follow {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userId")
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "feedId", nullable = false)
-    private Feed feed;
-
-    private LocalDateTime createAt;
-
 }
