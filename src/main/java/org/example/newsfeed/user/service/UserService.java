@@ -1,6 +1,8 @@
 package org.example.newsfeed.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.exception.ErrorCode;
+import org.example.newsfeed.common.exception.MyCustomException;
 import org.example.newsfeed.user.config.PasswordEncoder;
 import org.example.newsfeed.user.dto.*;
 import org.example.newsfeed.user.entity.User;
@@ -19,7 +21,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse findById(String userId) {
         User user =userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
+                () -> new MyCustomException(ErrorCode.USER_NOT_FOUND)
         );
         return new UserResponse(
                 user.getId(),
@@ -33,12 +35,12 @@ public class UserService {
     @Transactional
     public UserResponse updateUser(String userId, UserUpdate userUpdate) {
         User user = userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
+                () -> new MyCustomException(ErrorCode.USER_NOT_FOUND)
         );
 
         if (!user.getNickName().equals(userUpdate.getNickName()) &&
                 userRepository.existsByNickName(userUpdate.getNickName())) {
-            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+            throw new MyCustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
 
         user.updateProfile(userUpdate.getUserName(), userUpdate.getNickName());
@@ -55,15 +57,15 @@ public class UserService {
     @Transactional
     public UserResponse updatePassword(String userId, PasswordUpdate passwordUpdate) {
         User user = userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
+                () -> new MyCustomException(ErrorCode.USER_NOT_FOUND)
         );
 
         if (!passwordEncoder.matches(passwordUpdate.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+            throw new MyCustomException(ErrorCode.WRONG_EMAIL_PASSWORD);
         }
 
         if (passwordEncoder.matches(passwordUpdate.getNewPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("새 비밀번호는 현재 비밀번호와 같습니다.");
+            throw new MyCustomException(ErrorCode.SAME_PASSWORD);
         }
 
         user.updatePassword(passwordEncoder.encode(passwordUpdate.getNewPassword()));
@@ -80,11 +82,11 @@ public class UserService {
     @Transactional
     public void signUp(UserRequest request) {
         if (userRepository.existsByUserId(request.getUserId())) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+            throw new MyCustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
 
         if(userRepository.existsByNickName(request.getNickName())) {
-            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+            throw new MyCustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
 
 
@@ -104,11 +106,11 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse login(UserLoginRequest loginRequest) {
         User user = userRepository.findByUserId(loginRequest.getUserId()).orElseThrow(
-                () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
+                () -> new MyCustomException(ErrorCode.USER_NOT_FOUND)
         );
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new MyCustomException(ErrorCode.WRONG_EMAIL_PASSWORD);
         }
         return new UserResponse(
                 user.getId(),
@@ -122,15 +124,15 @@ public class UserService {
     @Transactional
     public void deleteuser(String userId, String password) {
         User user = userRepository.findByUserId(userId).orElseThrow(
-                () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
+                () -> new MyCustomException(ErrorCode.USER_NOT_FOUND)
         );
 
         if(user.getStatus() == UserStatus.DELETED) {
-            throw new IllegalArgumentException("이미 탈퇴한 계정입니다.");
+            throw new MyCustomException(ErrorCode.USER_ALREADY_DELETED);
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지않습니다.");
+            throw new MyCustomException(ErrorCode.WRONG_EMAIL_PASSWORD);
         }
 
         user.deleteUser();
