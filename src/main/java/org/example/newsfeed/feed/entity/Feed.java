@@ -11,7 +11,7 @@ import org.example.newsfeed.user.entity.User;
 @Entity
 @NoArgsConstructor
 
-@Table(name = "feeds")
+//@Table(name = "feeds")
 public class Feed extends BaseEntity {
 
     @Id
