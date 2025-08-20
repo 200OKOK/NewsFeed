@@ -2,6 +2,7 @@ package org.example.newsfeed.user.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.user.dto.*;
 import org.example.newsfeed.user.service.UserService;
@@ -35,7 +36,7 @@ public class UserController {
     @PutMapping("/{userId}/password")
     public ResponseEntity<UserResponse> updatePassword(
             @PathVariable String userId,
-            @RequestBody PasswordUpdate passwordUpdate
+            @RequestBody @Valid PasswordUpdate passwordUpdate
     ) {
        return ResponseEntity.ok(userService.updatePassword(userId, passwordUpdate));
     }
@@ -43,7 +44,7 @@ public class UserController {
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(
-            @RequestBody UserRequest request
+            @RequestBody @Valid UserRequest request
     ) {
         userService.signUp(request);
         return ResponseEntity.ok("회원가입에 성공하셨습니다.");
