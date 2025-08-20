@@ -16,10 +16,9 @@ public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping("/feeds/{feedId}/likes") //유저아이디는 sessionAttribute로 받을거임
+    @PostMapping("/feeds/{feedId}/likes")
     public ResponseEntity<CreateFeedLikeResp> createLike(@PathVariable Long feedId,@SessionAttribute("로그인 유저") Long userId){
-        log.info("게시글 ID : {} , 유저 ID : {}", feedId, userId);
-        return ResponseEntity.ok(likeService.createLike(userId,feedId));
+       return ResponseEntity.ok(likeService.createLike(userId,feedId));
     }
 
     @GetMapping("/feeds/{feedId}/likes")
@@ -28,9 +27,15 @@ public class LikeController {
         return ResponseEntity.ok(likeService.feedLikeCount(feedId));
     }
 
-    @PostMapping("/comments/{commentId}/likes") //유저아이디는 sessionAttribute로 받을거임
+    @PostMapping("/comments/{commentId}/likes")
     public ResponseEntity<CreateCommentLikeResp> createCommentLike(@PathVariable Long commentId,@SessionAttribute("로그인 유저") Long userId){
 
         return ResponseEntity.ok(likeService.createCommentLike(userId,commentId));
+    }
+
+    @GetMapping("/comments/{commentId}/likes")
+    public ResponseEntity<GetFeedLikeCountResp> getAllCommentLikes(@PathVariable Long commentId){
+
+        return ResponseEntity.ok(likeService.commentLikeCount(commentId));
     }
 }

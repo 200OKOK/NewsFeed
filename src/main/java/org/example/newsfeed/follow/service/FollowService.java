@@ -1,6 +1,7 @@
 package org.example.newsfeed.follow.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.follow.dto.FollowerResponse;
 import org.example.newsfeed.follow.dto.FollowingResponse;
 import org.example.newsfeed.follow.entity.Follow;
 import org.example.newsfeed.follow.repository.FollowRepository;
@@ -71,6 +72,39 @@ public class FollowService {
                 .map(follow -> new FollowingResponse(
                         follow.getFollowing().getId(),
                         follow.getFollowing().getUserName()))
+                .collect(Collectors.toList());
+    }
+
+    // ID를 통해 팔로우한 유저 조회
+    @Transactional(readOnly = true)
+    public FollowingResponse getFollowingUserById(Long followingId, Long followerId) {
+        User follower = userRepository.findById(followerId).orElseThrow(
+                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+        );
+
+        User following = userRepository.findById(followingId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
+        );
+
+        followRepository.findByFollowerAndFollowing(follower, following)
+                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+
+        return new FollowingResponse(following.getId(), following.getUserName());
+    }
+
+    // 나를 팔로우 하는 유저 목록 전체 조회
+    @Transactional(readOnly = true)
+    public List<FollowerResponse> getFollowerUsers(Long followingId) {
+        User following = userRepository.findById(followingId).orElseThrow(
+                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+        );
+
+        List<Follow> followers = followRepository.findAllByFollowing(following);
+
+        return followers.stream()
+                .map(follow -> new FollowerResponse(
+                        follow.getFollower().getId(),
+                        follow.getFollower().getUserName()))
                 .collect(Collectors.toList());
     }
 }

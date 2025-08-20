@@ -3,6 +3,7 @@ package org.example.newsfeed.follow.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.follow.dto.FollowerResponse;
 import org.example.newsfeed.follow.dto.FollowingResponse;
 import org.example.newsfeed.follow.service.FollowService;
 import org.springframework.http.ResponseEntity;
@@ -62,4 +63,34 @@ public class FollowController {
         List<FollowingResponse> followingList = followService.getFollowingUsers(followerId);
         return ResponseEntity.ok(followingList);
     }
+
+    // ID를 통해 팔로우한 유저 조회
+    @GetMapping("/{followingId}")
+    public ResponseEntity<FollowingResponse> getFollowingUserById(
+            @PathVariable("followingId") Long followingId,
+            HttpServletRequest request
+    ) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("로그인 유저") == null) {
+            return ResponseEntity.status(401).body(null);
+        }
+
+        Long followerId = (Long) session.getAttribute("로그인 유저");
+        FollowingResponse followingUser = followService.getFollowingUserById(followingId, followerId);
+        return ResponseEntity.ok(followingUser);
+    }
+
+    // 나를 팔로우하는 유저 목록 조회
+    @GetMapping("/followers")
+    public ResponseEntity<List<FollowerResponse>> getFollowerUsers(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("로그인 유저") == null) {
+            return ResponseEntity.status(401).body(null);
+        }
+
+        Long followingId = (Long) session.getAttribute("로그인 유저");
+        List<FollowerResponse> followerList = followService.getFollowerUsers(followingId);
+        return ResponseEntity.ok(followerList);
+    }
+
 }

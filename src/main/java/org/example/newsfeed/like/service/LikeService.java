@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.comment.entity.Comment;
 import org.example.newsfeed.comment.repository.CommentRepository;
+import org.example.newsfeed.common.exception.MyCustomException;
 import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.feed.repository.FeedRepository;
 import org.example.newsfeed.like.dto.CreateCommentLikeResp;
@@ -19,6 +20,10 @@ import org.example.newsfeed.user.entity.User;
 import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+
+import static org.example.newsfeed.common.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,15 +39,16 @@ public class LikeService {
     @Transactional
     public CreateFeedLikeResp createLike(Long userId,Long feedId) {
 
-        log.info("게시글 ID : {} , 유저 ID : {}", feedId, userId);
-
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new EntityNotFoundException("Feed not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new MyCustomException(USER_NOT_FOUND));
+        Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new MyCustomException(FEED_NOT_FOUND));
 
 
         boolean exists = tableLikeRepository.existsByUser_IdAndFeed_FeedId(userId,feedId);
 
         if(!exists){
+            if(Objects.equals(userId,feed.getUser().getId())){
+                throw new MyCustomException(SELF_FEED_LIKE_NOT_ALLOWED);
+            }
             Feedlike feedLike = tableLikeRepository.save(new Feedlike(user,feed));
             return  new CreateFeedLikeResp(user.getId(),feed.getFeedId(),feedLike.getCreateAt());
         }else{
@@ -54,23 +60,37 @@ public class LikeService {
 
     @Transactional(readOnly = true)
     public GetFeedLikeCountResp feedLikeCount(Long feedId) {
+        Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new MyCustomException(FEED_NOT_FOUND));
         int count = tableLikeRepository.countFeedByFeed_FeedId(feedId);
         return new GetFeedLikeCountResp(feedId,count);
     }
 
     @Transactional
     public CreateCommentLikeResp createCommentLike(Long userId, Long commentId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("Comment not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new MyCustomException(USER_NOT_FOUND));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new MyCustomException(COMMENT_NOT_FOUND));
 
         boolean exists = commentLikeRepository.existsByUser_IdAndComment_Id(userId,commentId);
 
         if(!exists){
+//            Comment가 완성되면 풀기
+//            if(Objects.equals(userId,comment.getUser().getId())){ 
+//                throw new MyCustomException(SELF_COMMENT_LIKE_NOT_ALLOWED);
+//            }
             CommentLike commentLike = commentLikeRepository.save(new CommentLike(user,comment));
             return new CreateCommentLikeResp(user.getId(),comment.getId(),commentLike.getCreateAt());
         }else{
             commentLikeRepository.deleteByUser_IdAndComment_Id(userId,commentId);
             return null;
         }
+    }
+
+    @Transactional
+    public GetFeedLikeCountResp commentLikeCount(Long commentId) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new MyCustomException(COMMENT_NOT_FOUND));
+        int commentCount = commentLikeRepository.countCommentLikeByComment_Id(commentId);
+
+        return new GetFeedLikeCountResp(commentId,commentCount);
     }
 }
