@@ -33,4 +33,10 @@ public class LikeController {
 
         return ResponseEntity.ok(likeService.createCommentLike(userId,commentId));
     }
+
+    @GetMapping("/comments/{commentId}/likes")
+    public ResponseEntity<GetFeedLikeCountResp> getAllCommentLikes(@PathVariable Long commentId){
+
+        return ResponseEntity.ok(likeService.commentLikeCount(commentId));
+    }
 }

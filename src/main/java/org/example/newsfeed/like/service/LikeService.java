@@ -20,6 +20,8 @@ import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -43,6 +45,9 @@ public class LikeService {
         boolean exists = tableLikeRepository.existsByUser_IdAndFeed_FeedId(userId,feedId);
 
         if(!exists){
+            if(Objects.equals(userId,feed.getUser().getId())){
+                throw new IllegalArgumentException("본인의 게시글에는 좋아요를 할 수 없습니다.");
+            }
             Feedlike feedLike = tableLikeRepository.save(new Feedlike(user,feed));
             return  new CreateFeedLikeResp(user.getId(),feed.getFeedId(),feedLike.getCreateAt());
         }else{
@@ -66,11 +71,22 @@ public class LikeService {
         boolean exists = commentLikeRepository.existsByUser_IdAndComment_Id(userId,commentId);
 
         if(!exists){
+//            Comment가 완성되면 풀기
+//            if(Objects.equals(userId,comment.getUser().getId())){ 
+//                throw new IllegalArgumentException("본인의 댓글에는 좋아요를 할 수 없습니다.");
+//            }
             CommentLike commentLike = commentLikeRepository.save(new CommentLike(user,comment));
             return new CreateCommentLikeResp(user.getId(),comment.getId(),commentLike.getCreateAt());
         }else{
             commentLikeRepository.deleteByUser_IdAndComment_Id(userId,commentId);
             return null;
         }
+    }
+
+    @Transactional
+    public GetFeedLikeCountResp commentLikeCount(Long commentId) {
+        int commentCount = commentLikeRepository.countCommentLikeByComment_Id(commentId);
+
+        return new GetFeedLikeCountResp(commentId,commentCount);
     }
 }
