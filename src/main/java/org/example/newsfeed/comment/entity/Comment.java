@@ -3,6 +3,7 @@ package org.example.newsfeed.comment.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.newsfeed.common.BaseEntity;
 import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.user.entity.User;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +24,25 @@ public class Comment {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "postId", nullable = false)
+    @JoinColumn(name = "feedId", nullable = false)
     private Feed feed;
 
     @Column(nullable = false, length = 500)
     private String content;
 
-    @Column(updatable = false)
-    private LocalDateTime createdAt =  LocalDateTime.now();
+//    @Column(updatable = false)
+//    private LocalDateTime createdAt =  LocalDateTime.now();
+//
+//    @Column
+//    private LocalDateTime modifiedAt;
 
-    @Column
-    private LocalDateTime modifiedAt;
+    public Comment(User user, Feed feed, String content) {
+        this.user = user;
+        this.feed = feed;
+        this.content = content;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
