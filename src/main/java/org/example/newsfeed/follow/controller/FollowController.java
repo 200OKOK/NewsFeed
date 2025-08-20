@@ -62,4 +62,20 @@ public class FollowController {
         List<FollowingResponse> followingList = followService.getFollowingUsers(followerId);
         return ResponseEntity.ok(followingList);
     }
+
+    // ID를 통해 팔로우한 유저 조회
+    @GetMapping("/{followingId}")
+    public ResponseEntity<FollowingResponse> getFollowingUserById(
+            @PathVariable("followingId") Long followingId,
+            HttpServletRequest request
+    ) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("로그인 유저") == null) {
+            return ResponseEntity.status(401).body(null);
+        }
+
+        Long followerId = (Long) session.getAttribute("로그인 유저");
+        FollowingResponse followingUser = followService.getFollowingUserById(followingId, followerId);
+        return ResponseEntity.ok(followingUser);
+    }
 }

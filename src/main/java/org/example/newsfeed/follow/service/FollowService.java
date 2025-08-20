@@ -73,4 +73,21 @@ public class FollowService {
                         follow.getFollowing().getUserName()))
                 .collect(Collectors.toList());
     }
+
+    // ID를 통해 팔로우한 유저 조회
+    @Transactional(readOnly = true)
+    public FollowingResponse getFollowingUserById(Long followingId, Long followerId) {
+        User follower = userRepository.findById(followerId).orElseThrow(
+                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+        );
+
+        User following = userRepository.findById(followingId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
+        );
+
+        followRepository.findByFollowerAndFollowing(follower, following)
+                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+
+        return new FollowingResponse(following.getId(), following.getUserName());
+    }
 }
