@@ -25,5 +25,10 @@ public class CommentLike {
     @JoinColumn(name = "commentId", nullable = false)
     private Comment comment;
 
-    private LocalDateTime createAt;
+    private LocalDateTime createAt = LocalDateTime.now();;
+
+    public CommentLike(User user, Comment comment) {
+        this.user = user;
+        this.comment = comment;
+    }
 }

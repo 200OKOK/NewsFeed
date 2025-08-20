@@ -9,4 +9,6 @@ public interface TableLikeRepository extends JpaRepository<Feedlike, Long> {
     void deleteByUser_IdAndFeed_FeedId(Long userId, Long feedId);
 
     int countFeedByFeed_FeedId(Long feedId);
+
+
 }
