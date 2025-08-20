@@ -37,4 +37,19 @@ public class FollowService {
         Follow follow = new Follow(follower, following);
         followRepository.save(follow);
     }
+
+    @Transactional
+    public void unfollowUser(Long followingUserId, Long followerId) {
+        User follower = userRepository.findById(followerId).orElseThrow(
+                () -> new IllegalArgumentException("팔로우 취소 요청을 보낸 사용자를 찾을 수 없습니다.")
+        );
+
+        User following = userRepository.findById(followingUserId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+
+        Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
+                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+
+        followRepository.delete(follow);
+    }
 }
