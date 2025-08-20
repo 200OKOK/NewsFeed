@@ -73,4 +73,11 @@ public class LikeService {
             return null;
         }
     }
+
+    @Transactional
+    public GetFeedLikeCountResp commentLikeCount(Long commentId) {
+        int commentCount = commentLikeRepository.countCommentLikeByComment_Id(commentId);
+
+        return new GetFeedLikeCountResp(commentId,commentCount);
+    }
 }
