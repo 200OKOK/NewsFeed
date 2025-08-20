@@ -17,9 +17,9 @@ public class FeedController {
     // 게시물 생성
     @PostMapping("/feeds")
     public ResponseEntity<FeedSaveResponseDto> save(
-            @SessionAttribute(name = "LOGIN_USER") Long userId,
+            @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @RequestBody FeedSaveRequestDto dto
-    ) {
+    ){
         return ResponseEntity.ok(feedService.save(userId, dto));
     }
 
@@ -32,7 +32,7 @@ public class FeedController {
     // 게시물 수정
     @PutMapping("/feeds/{feedId}")
     public ResponseEntity<FeedUpdateResponseDto> update(
-            @SessionAttribute(name = "LOGIN_USER") Long userId,
+            @SessionAttribute(name = "로그인 유저") Long userId,
             @PathVariable Long feedId,
             @RequestBody FeedUpdateRequestDto dto
     ) {
@@ -42,10 +42,19 @@ public class FeedController {
     // 게시물 삭제
     @DeleteMapping("/feeds/{feedId}")
     public ResponseEntity<Void> delete(
-            @SessionAttribute(name = "LOGIN_USER") Long userId,
+            @SessionAttribute(name = "로그인 유저") Long userId,
             @PathVariable Long feedId
     ) {
         feedService.deleteById(feedId, userId);
         return ResponseEntity.ok().build();
     }
+
+    //페이징
+//    @GetMapping("/feeds")
+//    public ResponseEntity<List<FeedResponse>> getPagedAll(
+//            @RequestParam int page,
+//            @RequestParam int size
+//    ){
+//        return ResponseEntity.ok(feedService.findAll(int page, int size));
+//    }
 }
