@@ -16,9 +16,13 @@ public enum ErrorCode {
 
 
 
-    COMMENT_NOT_FOUND("CMT-001","해당 댓글 찾을 수 없습니다.");
-    
-    
+    COMMENT_NOT_FOUND("CMT-001","해당 댓글 찾을 수 없습니다."),
+
+    FOLLOWUSER_NOT_FOUND("FLW-001", "팔로우 요청을 보낸 사용자를 찾을 수 없습니다."),
+    SELF_FOLLOW_NOT_ALLOWED("FLW-002", "자기 자신을 팔로우 할 수 없습니다."),
+    ALREADY_FOLLOW("FLW-003", "이미 팔로우 한 유저입니다."),
+    UNFOLLOWUSER_NOT_FOUND("FLW-004", "팔로우 취소 요청을 보낸 사용자를 찾을 수 없습니다."),
+    FOLLOW_RELATIONSHIP_NOT_EXIST("FLW-005", "팔로우 관계가 존재하지 않습니다.");
 
 
 //    EVENT_NOT_FOUND("EVT-001","해당 일정을 찾을 수 없습니다"),
