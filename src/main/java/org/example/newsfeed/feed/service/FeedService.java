@@ -9,14 +9,10 @@ import org.example.newsfeed.user.entity.UserStatus;
 import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +39,7 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getModifiedAt()
+                feed.getUpdatedAt()
         );
     }
 
@@ -65,7 +61,7 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getModifiedAt()
+                feed.getUpdatedAt()
         );
     }
 
@@ -102,7 +98,7 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getModifiedAt(),
+                feed.getUpdatedAt(),
                 feed.getUser().getUserName()
         ));
     }
