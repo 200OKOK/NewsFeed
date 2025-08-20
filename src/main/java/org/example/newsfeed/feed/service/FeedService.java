@@ -24,16 +24,21 @@ public class FeedService {
     @Transactional
     public FeedSaveResponseDto save(Long userId, FeedSaveRequestDto dto) {
         User user = getActiveUser(userId);
+
+        if(userId==null){
+            throw new IllegalStateException("로그인 후 이용 가능합니다.");
+        }
+
         Feed feed = new Feed(user, dto.getTitle(), dto.getContent());
         feedRepository.save(feed);
 
         return new FeedSaveResponseDto(
                 feed.getFeedId(),
-                user.getUserId(),
+                feed.getUser().getUserId(),
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getUpdatedAt()
+                feed.getModifiedAt()
         );
     }
 
@@ -47,7 +52,7 @@ public class FeedService {
                         feed.getTitle(),
                         feed.getContent(),
                         feed.getCreatedAt(),
-                        feed.getUpdatedAt()))
+                        feed.getModifiedAt()))
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +74,7 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getUpdatedAt()
+                feed.getModifiedAt()
         );
     }
 
@@ -93,4 +98,8 @@ public class FeedService {
                 .filter(user -> user.getStatus() == UserStatus.ACTIVE)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않거나 탈퇴한 사용자입니다."));
     }
+
+    //페이징
+//    @Transactional(readOnly = true)
+//    public
 }
