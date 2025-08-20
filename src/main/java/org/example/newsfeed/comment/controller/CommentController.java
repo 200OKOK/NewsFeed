@@ -21,7 +21,7 @@ public class CommentController {
     @PostMapping("/feeds/{feedId}/comments")
     public ResponseEntity<CommentResponse> createComment(
             @PathVariable Long feedId,
-            @SessionAttribute("LOGIN_USER") Long userId,
+            @SessionAttribute(name = "로그인 유저") Long userId,
             @Valid @RequestBody CommentCreateRequest request
     ) {
         return ResponseEntity.ok(commentService.create(feedId, userId, request));

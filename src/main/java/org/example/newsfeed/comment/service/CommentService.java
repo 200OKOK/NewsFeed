@@ -41,8 +41,8 @@ public class CommentService {
 
         return new CommentResponse(
                 savedComment.getId(),
-                savedComment.getFeed().getId(),        // feed.getId(),
-                savedComment.getUser().getUsername(),  // user.getUsername() 으로 생략 가능 (같은 객체를 참조하기 때문)
+                savedComment.getFeed().getFeedId(),    // feed.getId(),
+                savedComment.getUser().getUserName(),  // user.getUsername() 으로 생략 가능 (같은 객체를 참조하기 때문)
                 savedComment.getContent(),
                 savedComment.getCreatedAt(),
                 savedComment.getModifiedAt()
@@ -54,14 +54,14 @@ public class CommentService {
         feedRepository.findById(feedId)
                 .orElseThrow(() -> new IllegalArgumentException("Feed Not Found"));
 
-        List<Comment> comments = commentRepository.findByFeedId(feedId);
+        List<Comment> comments = commentRepository.findByFeed_FeedId(feedId);
 
         List<CommentResponse> responses = new ArrayList<>();
         for (Comment c : comments) {
             responses.add(new CommentResponse(
                     c.getId(),
-                    c.getFeed().getId(),
-                    c.getUser().getUsername(),
+                    c.getFeed().getFeedId(),
+                    c.getUser().getUserName(),
                     c.getContent(),
                     c.getCreatedAt(),
                     c.getModifiedAt()

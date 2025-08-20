@@ -7,15 +7,15 @@ import java.time.LocalDateTime;
 public class CommentResponse {
 
     private final Long id;
-    private final String postId;
+    private final Long feedId;
     private final String username;
     private final String content;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public CommentResponse(Long id, String postId, String username, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CommentResponse(Long id, Long feedId, String username, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
-        this.postId = postId;
+        this.feedId = feedId;
         this.username = username;
         this.content = content;
         this.createdAt = createdAt;
