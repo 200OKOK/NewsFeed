@@ -1,7 +1,6 @@
 package org.example.newsfeed.feed.dto;
 
 import lombok.Getter;
-import org.example.newsfeed.feed.entity.Feed;
 
 import java.time.LocalDateTime;
 

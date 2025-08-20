@@ -21,6 +21,5 @@ public class FeedUpdateResponseDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
 }
 

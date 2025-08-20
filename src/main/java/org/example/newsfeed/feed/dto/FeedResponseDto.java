@@ -23,4 +23,3 @@ public class FeedResponseDto {
         this.updatedAt = updatedAt;
     }
 }
-
