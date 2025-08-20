@@ -35,6 +35,12 @@ public class UserService {
         User user = userRepository.findByUserId(userId).orElseThrow(
                 () -> new IllegalArgumentException("그런 id의 유저는 없습니다.")
         );
+
+        if (!user.getNickName().equals(userUpdate.getNickName()) &&
+                userRepository.existsByNickName(userUpdate.getNickName())) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        }
+
         user.updateProfile(userUpdate.getUserName(), userUpdate.getNickName());
 
         return new UserResponse(
