@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.comment.entity.Comment;
 import org.example.newsfeed.comment.repository.CommentRepository;
+import org.example.newsfeed.common.exception.MyCustomException;
 import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.feed.repository.FeedRepository;
 import org.example.newsfeed.like.dto.CreateCommentLikeResp;
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+
+import static org.example.newsfeed.common.exception.ErrorCode.SELF_LIKE_NOT_ALLOWED;
+import static org.example.newsfeed.common.exception.ErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +42,7 @@ public class LikeService {
 
         log.info("게시글 ID : {} , 유저 ID : {}", feedId, userId);
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new MyCustomException(USER_NOT_FOUND));
         Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new EntityNotFoundException("Feed not found"));
 
 
@@ -46,7 +50,7 @@ public class LikeService {
 
         if(!exists){
             if(Objects.equals(userId,feed.getUser().getId())){
-                throw new IllegalArgumentException("본인의 게시글에는 좋아요를 할 수 없습니다.");
+                throw new MyCustomException(SELF_LIKE_NOT_ALLOWED);
             }
             Feedlike feedLike = tableLikeRepository.save(new Feedlike(user,feed));
             return  new CreateFeedLikeResp(user.getId(),feed.getFeedId(),feedLike.getCreateAt());
@@ -65,7 +69,7 @@ public class LikeService {
 
     @Transactional
     public CreateCommentLikeResp createCommentLike(Long userId, Long commentId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new MyCustomException(USER_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("Comment not found"));
 
         boolean exists = commentLikeRepository.existsByUser_IdAndComment_Id(userId,commentId);
