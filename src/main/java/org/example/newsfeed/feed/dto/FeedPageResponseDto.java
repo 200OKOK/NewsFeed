@@ -1,12 +1,12 @@
 package org.example.newsfeed.feed.dto;
 
 import lombok.Getter;
+import org.example.newsfeed.feed.entity.Feed;
 
 import java.time.LocalDateTime;
 
 @Getter
-public class FeedResponseDto {
-
+public class FeedPageResponseDto {
     private final Long feedId;
     private final String userId;
     private final String title;
@@ -14,13 +14,13 @@ public class FeedResponseDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public FeedResponseDto(Long feedId, String userId, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+
+    public FeedPageResponseDto(Long feedId, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, String userName) {
         this.feedId = feedId;
-        this.userId = userId;
+        this.userId = userName;
         this.title = title;
         this.content = content;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
 }
-

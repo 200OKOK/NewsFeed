@@ -7,10 +7,15 @@ import org.example.newsfeed.feed.repository.FeedRepository;
 import org.example.newsfeed.user.entity.User;
 import org.example.newsfeed.user.entity.UserStatus;
 import org.example.newsfeed.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,20 +45,6 @@ public class FeedService {
                 feed.getCreatedAt(),
                 feed.getModifiedAt()
         );
-    }
-
-    // 게시글 전체 조회
-    @Transactional(readOnly = true)
-    public List<FeedResponseDto> findAll() {
-        return feedRepository.findAll().stream()
-                .map(feed -> new FeedResponseDto(
-                        feed.getFeedId(),
-                        feed.getUser().getUserId(), // 이메일
-                        feed.getTitle(),
-                        feed.getContent(),
-                        feed.getCreatedAt(),
-                        feed.getModifiedAt()))
-                .collect(Collectors.toList());
     }
 
     // 게시글 수정
@@ -99,7 +90,20 @@ public class FeedService {
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않거나 탈퇴한 사용자입니다."));
     }
 
-    //페이징
-//    @Transactional(readOnly = true)
-//    public
+    //게시글 전체 조회
+    @Transactional(readOnly = true)
+    public Page<FeedPageResponseDto> findAllPage(int page, int size) {
+        int adjustedPage = (page > 0) ? page - 1 : 0;
+        PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
+        Page<Feed> feedPage = feedRepository.findAll(pageable);
+
+        return feedPage.map(feed -> new FeedPageResponseDto(
+                feed.getFeedId(),
+                feed.getTitle(),
+                feed.getContent(),
+                feed.getCreatedAt(),
+                feed.getModifiedAt(),
+                feed.getUser().getUserName()
+        ));
+    }
 }
