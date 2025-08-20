@@ -20,6 +20,7 @@ public class FeedController {
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @RequestBody FeedSaveRequestDto dto
     ){
+
         return ResponseEntity.ok(feedService.save(userId, dto));
     }
 
