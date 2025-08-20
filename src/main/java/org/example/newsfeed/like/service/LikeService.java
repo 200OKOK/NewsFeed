@@ -34,6 +34,8 @@ public class LikeService {
     @Transactional
     public CreateFeedLikeResp createLike(Long userId,Long feedId) {
 
+        log.info("게시글 ID : {} , 유저 ID : {}", feedId, userId);
+
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
         Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new EntityNotFoundException("Feed not found"));
 
