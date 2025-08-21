@@ -3,11 +3,12 @@ package org.example.newsfeed.user.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.newsfeed.common.BaseEntity;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class User {
+public class User extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
