@@ -42,7 +42,7 @@ public class CommentService {
                 .orElseThrow(() -> new MyCustomException(ErrorCode.FEED_NOT_FOUND));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new MyCustomException(ErrorCode.LOGIN_REQUIRED));
+                .orElseThrow(() -> new MyCustomException(ErrorCode.USER_NOT_FOUND));
 
         Comment comment = new Comment(user, feed, request.getContent());
         Comment savedComment = commentRepository.save(comment);
@@ -90,10 +90,6 @@ public class CommentService {
 
         if (!userId.equals(commentAuthorId) && !userId.equals(feedAuthorId)) {
             throw new MyCustomException(ErrorCode.UNAUTHORIZED_COMMENT_UPDATE);
-        }
-
-        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
-            throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
 
         String newContent = request.getContent();
