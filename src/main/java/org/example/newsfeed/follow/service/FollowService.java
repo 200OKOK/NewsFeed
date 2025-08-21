@@ -1,6 +1,7 @@
 package org.example.newsfeed.follow.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.common.exception.MyCustomException;
 import org.example.newsfeed.follow.dto.FollowerResponse;
 import org.example.newsfeed.follow.dto.FollowingResponse;
 import org.example.newsfeed.follow.entity.Follow;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import static org.example.newsfeed.common.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,20 +24,20 @@ public class FollowService {
     @Transactional
     public void followUser(Long followingUserId, Long followedId){
         User follower = userRepository.findById(followedId).orElseThrow(
-                () -> new IllegalArgumentException("팔로우 요청을 보낸 사용자를 찾을 수 없습니다.")
+                () -> new MyCustomException(FOLLOWUSER_NOT_FOUND)
         );
 
         if(follower.getId().equals(followingUserId)){
-            throw new IllegalArgumentException("자기 자신을 팔로우 할 수 없습니다.");
+            throw new MyCustomException(SELF_FOLLOW_NOT_ALLOWED);
         }
 
         User following = userRepository.findById(followingUserId).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
+                () -> new MyCustomException(USER_NOT_FOUND)
         );
 
         followRepository.findByFollowerAndFollowing(follower, following).ifPresent(
                 m -> {
-                    throw new IllegalArgumentException("이미 팔로우 한 유저입니다.");
+                    throw new MyCustomException(ALREADY_FOLLOW);
                 }
         );
 
@@ -47,14 +49,14 @@ public class FollowService {
     @Transactional
     public void unfollowUser(Long followingUserId, Long followerId) {
         User follower = userRepository.findById(followerId).orElseThrow(
-                () -> new IllegalArgumentException("팔로우 취소 요청을 보낸 사용자를 찾을 수 없습니다.")
+                () -> new MyCustomException(UNFOLLOWUSER_NOT_FOUND)
         );
 
         User following = userRepository.findById(followingUserId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new MyCustomException(USER_NOT_FOUND));
 
         Follow follow = followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+                .orElseThrow(() -> new MyCustomException(FOLLOW_RELATIONSHIP_NOT_EXIST));
 
         followRepository.delete(follow);
     }
@@ -63,7 +65,7 @@ public class FollowService {
     @Transactional(readOnly = true)
     public List<FollowingResponse> getFollowingUsers(Long followerId) {
         User follower = userRepository.findById(followerId).orElseThrow(
-                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+                () -> new MyCustomException(USER_NOT_FOUND)
         );
 
         List<Follow> follows = followRepository.findAllByFollower(follower);
@@ -79,15 +81,15 @@ public class FollowService {
     @Transactional(readOnly = true)
     public FollowingResponse getFollowingUserById(Long followingId, Long followerId) {
         User follower = userRepository.findById(followerId).orElseThrow(
-                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+                () -> new MyCustomException(USER_NOT_FOUND)
         );
 
         User following = userRepository.findById(followingId).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다.")
+                () -> new MyCustomException(USER_NOT_FOUND)
         );
 
         followRepository.findByFollowerAndFollowing(follower, following)
-                .orElseThrow(() -> new IllegalArgumentException("팔로우 관계가 존재하지 않습니다."));
+                .orElseThrow(() -> new MyCustomException(FOLLOW_RELATIONSHIP_NOT_EXIST));
 
         return new FollowingResponse(following.getId(), following.getUserName());
     }
@@ -96,7 +98,7 @@ public class FollowService {
     @Transactional(readOnly = true)
     public List<FollowerResponse> getFollowerUsers(Long followingId) {
         User following = userRepository.findById(followingId).orElseThrow(
-                () -> new IllegalArgumentException("유저를 찾을 수 없습니다.")
+                () -> new MyCustomException(USER_NOT_FOUND)
         );
 
         List<Follow> followers = followRepository.findAllByFollowing(following);
