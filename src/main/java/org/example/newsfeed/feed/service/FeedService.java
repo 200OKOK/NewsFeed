@@ -10,9 +10,16 @@ import org.example.newsfeed.user.entity.UserStatus;
 import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 
 import static org.example.newsfeed.common.exception.ErrorCode.*;
@@ -121,5 +128,24 @@ public class FeedService {
         if (userId == null) {
             throw new MyCustomException(LOGIN_REQUIRED);
         }
+    }
+
+    public List<FeedByDateResponseDto> getFeedByDate(LocalDate searchStartDate, LocalDate searchEndDate) {
+
+        
+        //엔티티가 LocalDateTIme이라서 맞춰줘야함
+        LocalDateTime start = searchStartDate.atStartOfDay();           // 00:00:00
+        LocalDateTime end = searchEndDate.atTime(LocalTime.MAX);        // 23:59:59.999999999
+        List<Feed> feedList = feedRepository.findByCreatedAtBetween(start,end);
+
+        return feedList.stream()
+                .map(feed -> new FeedByDateResponseDto(
+                        feed.getFeedId(),
+                        feed.getUser().getUserId(),
+                        feed.getTitle(),
+                        feed.getContent(),
+                        feed.getCreatedAt(),
+                        feed.getUpdatedAt()
+                )).toList();
     }
 }
