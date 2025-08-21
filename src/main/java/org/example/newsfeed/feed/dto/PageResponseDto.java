@@ -26,7 +26,7 @@ public class PageResponseDto<T> {
                                          Integer size,
                                          Integer totalPages,
                                          Long totalElements,
-                                         T posts){ //매개변수 똑같이
+                                         T posts){ 
         return new PageResponseDto(page, size, totalPages, totalElements, posts);
     }
 
