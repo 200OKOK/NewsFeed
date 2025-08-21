@@ -24,15 +24,14 @@ public enum ErrorCode {
 
 
     COMMENT_NOT_FOUND("CMT-001","해당 댓글 찾을 수 없습니다."),
-
+    UNAUTHORIZED_COMMENT_UPDATE("CMT-002", "해당 댓글의 수정 권한이 없습니다."),
+    UNAUTHORIZED_COMMENT_DELETE("CMT-003", "해당 댓글의 삭제 권한이 없습니다."),
+    COMMENT_CONTENT_REQUIRED("CMT-004", "댓글 내용을 입력해주세요."),
 
 
     PASSWORD_TOO_SHORT("PWD-001", "비밀번호는 최소 8자리 이상이어야 합니다."),
     PASSWORD_POLICY_VIOLATION("PWD-002", "비밀번호는 대문자, 소문자, 숫자, 특수문자를 각각 최소 1글자 포함해야 합니다."),
     SAME_PASSWORD("PWD-003","새 비밀번호는 현재 비밀번호와 같습니다."),
-
-
-
 
 
     FOLLOWUSER_NOT_FOUND("FLW-001", "팔로우 요청을 보낸 사용자를 찾을 수 없습니다."),
