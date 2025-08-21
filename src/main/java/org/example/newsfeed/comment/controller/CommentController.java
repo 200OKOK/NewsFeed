@@ -10,6 +10,7 @@ import org.example.newsfeed.comment.service.CommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,11 +25,10 @@ public class CommentController {
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @Valid @RequestBody CommentCreateRequest request
     ) {
-        return ResponseEntity.ok(commentService.create(feedId, userId, request));
 
-//        CommentResponse res = commentService.create(feedId, userId, request);
-//        URI location = URI.create("/comments/" + res.id());
-//        return ResponseEntity.created(location).body(res);  // 201 + location
+        CommentResponse response = commentService.create(feedId, userId, request);
+        URI location = URI.create("/comments/" + response.getId());
+        return ResponseEntity.created(location).body(response);
     }
 
     @GetMapping("/feeds/{feedId}/comments")

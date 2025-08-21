@@ -47,14 +47,7 @@ public class CommentService {
         Comment comment = new Comment(user, feed, request.getContent());
         Comment savedComment = commentRepository.save(comment);
 
-        return new CommentResponse(
-                savedComment.getId(),
-                savedComment.getFeed().getFeedId(),    // feed.getId(),
-                savedComment.getUser().getUserName(),  // user.getUsername() 으로 생략 가능 (같은 객체를 참조하기 때문)
-                savedComment.getContent(),
-                savedComment.getCreatedAt(),
-                savedComment.getUpdatedAt()
-        );
+        return CommentResponse.of(savedComment);
     }
 
 
@@ -84,6 +77,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponse update(Long commentId, Long userId, CommentUpdateRequest request) {
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
 
@@ -102,21 +96,20 @@ public class CommentService {
             throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
 
-        comment.updateContent(request.getContent());
+        String newContent = request.getContent();
+        if (newContent == null || newContent.trim().isEmpty()) {
+            throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
+        }
 
-        return new CommentResponse(
-                comment.getId(),
-                comment.getFeed().getFeedId(),
-                comment.getUser().getUserName(),
-                comment.getContent(),
-                comment.getCreatedAt(),
-                comment.getUpdatedAt()
-        );
+        comment.updateContent(newContent.trim());
+
+        return CommentResponse.of(comment);
     }
 
 
     @Transactional
     public void delete(Long commentId, Long userId) {
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
 
