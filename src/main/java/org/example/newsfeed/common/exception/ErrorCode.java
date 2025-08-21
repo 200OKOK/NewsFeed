@@ -12,13 +12,26 @@ public enum ErrorCode {
     SELF_FEED_LIKE_NOT_ALLOWED("USR-004" ,"본인의 피드에는 좋아요를 할 수 없습니다."),
     SELF_COMMENT_LIKE_NOT_ALLOWED("USR-005" ,"본인의 피드에는 좋아요를 할 수 없습니다."),
 
+    USER_ALREADY_EXISTS("USR-006","이미 존재하는 이메일입니다."),
+    NICKNAME_ALREADY_EXISTS("USR-007","이미 존재하는 닉네임입니다."),
+    USER_ALREADY_DELETED("USR-008", "이미 탈퇴한 계정입니다."),
+    LOGIN_REQUIRED("USR-009", "로그인이 필요합니다."),
+
     FEED_NOT_FOUND("FED-001","해당 피드를 찾을 수 없습니다."),
+    INVALID_FEED_OWNER("FED-002", "본인이 작성한 게시물만 수정할 수 있습니다."),
+    UNAUTHORIZED_FEED_DELETE("FED-003", "본인이 작성한 게시물만 삭제할 수 있습니다."),
+    TITLE_OR_CONTENT_REQUIRED("FED-002", "제목과 내용은 비어 있을 수 없습니다."),
+
+
+    COMMENT_NOT_FOUND("CMT-001","해당 댓글 찾을 수 없습니다."),
 
 
 
-    COMMENT_NOT_FOUND("CMT-001","해당 댓글 찾을 수 없습니다.");
-    
-    
+    PASSWORD_TOO_SHORT("PWD-001", "비밀번호는 최소 8자리 이상이어야 합니다."),
+    PASSWORD_POLICY_VIOLATION("PWD-002", "비밀번호는 대문자, 소문자, 숫자, 특수문자를 각각 최소 1글자 포함해야 합니다."),
+    SAME_PASSWORD("PWD-003","새 비밀번호는 현재 비밀번호와 같습니다.");
+
+
 
 
 //    EVENT_NOT_FOUND("EVT-001","해당 일정을 찾을 수 없습니다"),
@@ -27,3 +40,4 @@ public enum ErrorCode {
     private final String code;
     private final String message;
 }
+

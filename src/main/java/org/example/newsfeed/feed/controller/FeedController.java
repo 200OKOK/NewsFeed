@@ -29,10 +29,12 @@ public class FeedController {
     //게시물 전체 조회
     @GetMapping("/feeds/page/{pageNum}")
     public ResponseEntity<Map<String, Object>> findAllPage(
+            @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable int pageNum,
             @RequestParam(defaultValue = "10") int size
+
     ) {
-        Page<FeedPageResponseDto> result = feedService.findAllPage(pageNum, size);
+        Page<FeedPageResponseDto> result = feedService.findAllPage(pageNum, size, userId);
         return ResponseEntity.ok(
                 Map.of(
                         "page", result.getNumber() + 1, // 1부터 시작하는 페이지 번호로 조정
@@ -46,7 +48,7 @@ public class FeedController {
     // 게시물 수정
     @PutMapping("/feeds/{feedId}")
     public ResponseEntity<FeedUpdateResponseDto> update(
-            @SessionAttribute(name = "로그인 유저") Long userId,
+            @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable Long feedId,
             @RequestBody FeedUpdateRequestDto dto
     ) {
@@ -56,7 +58,7 @@ public class FeedController {
     // 게시물 삭제
     @DeleteMapping("/feeds/{feedId}")
     public ResponseEntity<Void> delete(
-            @SessionAttribute(name = "로그인 유저") Long userId,
+            @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable Long feedId
     ) {
         feedService.deleteById(feedId, userId);
