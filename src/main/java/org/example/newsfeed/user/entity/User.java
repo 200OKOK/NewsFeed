@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.newsfeed.common.BaseEntity;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -24,24 +26,29 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String nickName;
 
+    @Column(nullable = true)
+    private LocalDate birth;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
 
-    public User(String userId, String userName, String password, String nickName) {
+    public User(String userId, String userName, String password, String nickName, LocalDate birth) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
         this.nickName = nickName;
+        this.birth = birth;
     }
 
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
 
-    public void updateProfile(String userName,String nickname) {
+    public void updateProfile(String userName,String nickname, LocalDate birth) {
         this.userName = userName;
         this.nickName = nickname;
+        this.birth = birth;
     }
 
     public void deleteUser() {

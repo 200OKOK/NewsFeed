@@ -44,10 +44,6 @@ public class FeedService {
         User user = getActiveUser(userId);
 
         Feed feed = new Feed(user, dto.getTitle(), dto.getContent());
-        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty() ||
-                dto.getContent() == null || dto.getContent().trim().isEmpty()) {
-            throw new MyCustomException(TITLE_OR_CONTENT_REQUIRED);
-        }
 
         feedRepository.save(feed);
 
@@ -169,7 +165,7 @@ public class FeedService {
         }
 
         // 3. 팔로우한 유저들의 ID를 사용하여 게시물을 최신순으로 조회
-        List<Feed> feeds = feedRepository.findAllByUser_UserIdInOrderByCreatedAtDesc(followingUserIds);
+        List<Feed> feeds = feedRepository.findAllByUser_IdInOrderByCreatedAtDesc(followingUserIds);
 
         return feeds.stream()
                 .map(feed -> new FeedResponseDto(

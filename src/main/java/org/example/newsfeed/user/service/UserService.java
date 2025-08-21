@@ -27,7 +27,8 @@ public class UserService {
                 user.getId(),
                 user.getUserId(),
                 user.getUserName(),
-                user.getNickName()
+                user.getNickName(),
+                user.getBirth()
         );
     }
 
@@ -43,13 +44,14 @@ public class UserService {
             throw new MyCustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
 
-        user.updateProfile(userUpdate.getUserName(), userUpdate.getNickName());
+        user.updateProfile(userUpdate.getUserName(), userUpdate.getNickName(), userUpdate.getBirth());
 
         return new UserResponse(
                 user.getId(),
                 user.getUserId(),
                 user.getUserName(),
-                user.getNickName()
+                user.getNickName(),
+                user.getBirth()
         );
     }
 
@@ -74,7 +76,8 @@ public class UserService {
                 user.getId(),
                 user.getUserId(),
                 user.getUserName(),
-                user.getNickName()
+                user.getNickName(),
+                user.getBirth()
         );
     }
 
@@ -96,7 +99,8 @@ public class UserService {
                 request.getUserId(),
                 request.getUserName(),
                 encodedPw,
-                request.getNickName()
+                request.getNickName(),
+                request.getBirth()
         );
         
         userRepository.save(user);
@@ -116,7 +120,8 @@ public class UserService {
                 user.getId(),
                 user.getUserId(),
                 user.getUserName(),
-                user.getNickName()
+                user.getNickName(),
+                user.getBirth()
         );
     }
 
