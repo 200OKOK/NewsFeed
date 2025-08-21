@@ -16,7 +16,7 @@ public class UserController {
     private final UserService userService;
 
     // 프로필 조회
-    @GetMapping("/{userId}") //프로필 조회
+    @GetMapping("/users/{userId}") //프로필 조회
     public ResponseEntity<UserResponse> getUserById(
             @PathVariable String userId
     ) {
@@ -24,7 +24,7 @@ public class UserController {
     }
 
     // 프로필 수정
-    @PutMapping("/{userId}")
+    @PutMapping("/users/{userId}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable String userId,
             @RequestBody UserUpdate userUpdate
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     // 비밀번호 수정
-    @PutMapping("/{userId}/password")
+    @PutMapping("/users/{userId}/password")
     public ResponseEntity<UserResponse> updatePassword(
             @PathVariable String userId,
             @RequestBody @Valid PasswordUpdate passwordUpdate
@@ -77,7 +77,7 @@ public class UserController {
     // 회원 탈퇴
     @DeleteMapping
     public ResponseEntity<String> deleteUser(
-            @RequestBody UserDeleteRequest request
+            @RequestBody @Valid UserDeleteRequest request
     ) {
         userService.deleteuser(request.getUserId(), request.getPassword());
         return ResponseEntity.ok("계정을 탈퇴하셨습니다.");
