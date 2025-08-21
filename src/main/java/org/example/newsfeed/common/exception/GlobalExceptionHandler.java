@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMyCustomException(MyCustomException e, HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(e.getCode(),e.getMessage(),request.getRequestURI());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
