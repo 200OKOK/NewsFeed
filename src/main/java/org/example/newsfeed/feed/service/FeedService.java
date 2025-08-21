@@ -34,10 +34,6 @@ public class FeedService {
         User user = getActiveUser(userId);
 
         Feed feed = new Feed(user, dto.getTitle(), dto.getContent());
-        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty() ||
-                dto.getContent() == null || dto.getContent().trim().isEmpty()) {
-            throw new MyCustomException(TITLE_OR_CONTENT_REQUIRED);
-        }
 
         feedRepository.save(feed);
 
