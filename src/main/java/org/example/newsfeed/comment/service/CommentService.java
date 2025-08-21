@@ -30,6 +30,10 @@ public class CommentService {
     @Transactional
     public CommentResponse create(Long feedId, Long userId, CommentCreateRequest request) {
 
+        if (userId == null) {
+            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
+        }
+
         if (request.getContent() == null || request.getContent().trim().isEmpty()) {
             throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
@@ -56,8 +60,10 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByFeed(Long feedId) {
-        feedRepository.findById(feedId)
-                .orElseThrow(() -> new MyCustomException(ErrorCode.FEED_NOT_FOUND));
+
+        if(!feedRepository.existsById(feedId)) {
+            throw new MyCustomException(ErrorCode.FEED_NOT_FOUND);
+        }
 
         List<Comment> comments = commentRepository.findByFeed_FeedId(feedId);
 
@@ -81,11 +87,19 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
 
+        if (userId == null) {
+            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
+        }
+
         Long commentAuthorId = comment.getUser().getId();
         Long feedAuthorId = comment.getFeed().getUser().getId();
 
         if (!userId.equals(commentAuthorId) && !userId.equals(feedAuthorId)) {
             throw new MyCustomException(ErrorCode.UNAUTHORIZED_COMMENT_UPDATE);
+        }
+
+        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+            throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
 
         comment.updateContent(request.getContent());
@@ -105,6 +119,10 @@ public class CommentService {
     public void delete(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (userId == null) {
+            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
+        }
 
         Long commentAuthorId = comment.getUser().getId();
         Long feedAuthorId = comment.getFeed().getUser().getId();

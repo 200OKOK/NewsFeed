@@ -30,12 +30,6 @@ public class Comment extends BaseEntity {
     @Column(nullable = false, length = 500)
     private String content;
 
-//    @Column(updatable = false)
-//    private LocalDateTime createdAt =  LocalDateTime.now();
-//
-//    @Column
-//    private LocalDateTime modifiedAt;
-
     public Comment(User user, Feed feed, String content) {
         this.user = user;
         this.feed = feed;
