@@ -1,5 +1,7 @@
 package org.example.newsfeed.feed.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.feed.dto.*;
 import org.example.newsfeed.feed.service.FeedService;
@@ -48,6 +50,19 @@ public class FeedController {
     ) {
         feedService.deleteById(feedId, userId);
         return ResponseEntity.ok().build();
+    }
+
+    // 팔로우한 유저의 게시물 전체 조회
+    @GetMapping("/feeds/following")
+    public ResponseEntity<List<FeedResponseDto>> getFollowingUsersPosts(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("로그인 유저") == null) {
+            return ResponseEntity.status(401).body(null);
+        }
+        Long userId = (Long) session.getAttribute("로그인 유저");
+
+        List<FeedResponseDto> feeds = feedService.getFollowingFeeds(userId);
+        return ResponseEntity.ok(feeds);
     }
 
     //페이징

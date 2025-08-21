@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.feed.dto.*;
 import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.feed.repository.FeedRepository;
+import org.example.newsfeed.follow.dto.FollowingResponse;
+import org.example.newsfeed.follow.service.FollowService;
 import org.example.newsfeed.user.entity.User;
 import org.example.newsfeed.user.entity.UserStatus;
 import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +22,7 @@ public class FeedService {
 
     private final FeedRepository feedRepository;
     private final UserRepository userRepository;
+    private final FollowService followService;
 
     // 게시글 생성
     @Transactional
@@ -97,6 +101,35 @@ public class FeedService {
         return userRepository.findById(userId)
                 .filter(user -> user.getStatus() == UserStatus.ACTIVE)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않거나 탈퇴한 사용자입니다."));
+    }
+
+    // 팔로우한 유저들의 게시물 전체 조회
+    @Transactional(readOnly = true)
+    public List<FeedResponseDto> getFollowingFeeds(Long userId) {
+        // 1. 현재 로그인한 유저가 팔로우하는 모든 유저의 ID 목록을 가져옴
+        List<FollowingResponse> followingList = followService.getFollowingUsers(userId);
+
+        List<Long> followingUserIds = followingList.stream()
+                .map(FollowingResponse::getId)
+                .collect(Collectors.toList());
+
+        // 2. 팔로우한 유저가 없다면 빈 목록을 반환
+        if (followingUserIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 3. 팔로우한 유저들의 ID를 사용하여 게시물을 최신순으로 조회
+        List<Feed> feeds = feedRepository.findAllByUser_UserIdInOrderByCreatedAtDesc(followingUserIds);
+
+        return feeds.stream()
+                .map(feed -> new FeedResponseDto(
+                        feed.getFeedId(),
+                        feed.getUser().getUserId(),
+                        feed.getTitle(),
+                        feed.getContent(),
+                        feed.getCreatedAt(),
+                        feed.getModifiedAt()))
+                .collect(Collectors.toList());
     }
 
     //페이징
