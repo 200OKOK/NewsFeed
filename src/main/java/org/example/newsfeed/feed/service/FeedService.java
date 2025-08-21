@@ -47,7 +47,7 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getModifiedAt()
+                feed.getUpdatedAt()
         );
     }
 
@@ -64,7 +64,7 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getModifiedAt(),
+                feed.getUpdatedAt(),
                 feed.getUser().getUserName()
         ));
     }
@@ -90,7 +90,7 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getModifiedAt()
+                feed.getUpdatedAt()
         );
     }
 
