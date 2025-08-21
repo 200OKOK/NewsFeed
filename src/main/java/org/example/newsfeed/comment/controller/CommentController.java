@@ -50,4 +50,14 @@ public class CommentController {
         CommentResponse updatedComment = commentService.update(commentId, userId, request);
         return ResponseEntity.ok(updatedComment);
     }
+
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<CommentResponse> deleteComment(
+            @PathVariable Long commentId,
+            @SessionAttribute(name = "로그인 유저") Long userId
+    ) {
+        commentService.delete(commentId, userId);
+        return ResponseEntity.noContent().build();
+    }
 }

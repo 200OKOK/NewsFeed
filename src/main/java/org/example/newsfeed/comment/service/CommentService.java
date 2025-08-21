@@ -24,6 +24,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
 
+
     @Transactional
     public CommentResponse create(Long feedId, Long userId, CommentCreateRequest request) {
 
@@ -49,6 +50,7 @@ public class CommentService {
                 savedComment.getUpdatedAt()
         );
     }
+
 
     @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByFeed(Long feedId) {
@@ -77,10 +79,11 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
 
-        Feed feed = comment.getFeed();
+        Long commentAuthorId = comment.getUser().getId();
+        Long feedAuthorId = comment.getFeed().getUser().getId();
 
-        if (!comment.getUser().getId().equals(userId) && !feed.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("수정 권한이 없습니다");
+        if (!userId.equals(commentAuthorId) && !userId.equals(feedAuthorId)) {
+            throw new IllegalArgumentException("해당 댓글의 수정 권한이 없습니다.");
         }
 
         comment.updateContent(request.getContent());
@@ -96,4 +99,18 @@ public class CommentService {
     }
 
 
+    @Transactional
+    public void delete(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+
+        Long commentAuthorId = comment.getUser().getId();
+        Long feedAuthorId = comment.getFeed().getUser().getId();
+
+        if(!userId.equals(commentAuthorId) && !userId.equals(feedAuthorId)) {
+            throw new IllegalArgumentException("해당 댓글의 삭제 권한이 없습니다.");
+        }
+
+        commentRepository.delete(comment);
+    }
 }
