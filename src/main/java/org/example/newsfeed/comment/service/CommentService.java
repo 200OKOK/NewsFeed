@@ -3,6 +3,7 @@ package org.example.newsfeed.comment.service;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.comment.dto.CommentCreateRequest;
 import org.example.newsfeed.comment.dto.CommentResponse;
+import org.example.newsfeed.comment.dto.CommentUpdateRequest;
 import org.example.newsfeed.comment.entity.Comment;
 import org.example.newsfeed.comment.repository.CommentRepository;
 import org.example.newsfeed.feed.entity.Feed;
@@ -70,6 +71,29 @@ public class CommentService {
         return responses;
     }
 
+
+    @Transactional
+    public CommentResponse update(Long commentId, Long userId, CommentUpdateRequest request) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
+
+        Feed feed = comment.getFeed();
+
+        if (!comment.getUser().getId().equals(userId) && !feed.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("수정 권한이 없습니다");
+        }
+
+        comment.updateContent(request.getContent());
+
+        return new CommentResponse(
+                comment.getId(),
+                comment.getFeed().getFeedId(),
+                comment.getUser().getUserName(),
+                comment.getContent(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        );
+    }
 
 
 }

@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.comment.dto.CommentCreateRequest;
 import org.example.newsfeed.comment.dto.CommentResponse;
+import org.example.newsfeed.comment.dto.CommentUpdateRequest;
 import org.example.newsfeed.comment.service.CommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +38,16 @@ public class CommentController {
     ) {
         List<CommentResponse> responses = commentService.getCommentsByFeed(feedId);
         return ResponseEntity.ok(responses);
+    }
+
+
+    @PatchMapping("/comments/{commentId}")
+    public ResponseEntity<CommentResponse> updateComment(
+            @PathVariable Long commentId,
+            @SessionAttribute(name = "로그인 유저") Long userId,
+            @RequestBody CommentUpdateRequest request
+    ) {
+        CommentResponse updatedComment = commentService.update(commentId, userId, request);
+        return ResponseEntity.ok(updatedComment);
     }
 }
