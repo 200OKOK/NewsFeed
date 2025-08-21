@@ -3,8 +3,11 @@ package org.example.newsfeed.comment.service;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.comment.dto.CommentCreateRequest;
 import org.example.newsfeed.comment.dto.CommentResponse;
+import org.example.newsfeed.comment.dto.CommentUpdateRequest;
 import org.example.newsfeed.comment.entity.Comment;
 import org.example.newsfeed.comment.repository.CommentRepository;
+import org.example.newsfeed.common.exception.ErrorCode;
+import org.example.newsfeed.common.exception.MyCustomException;
 import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.feed.repository.FeedRepository;
 import org.example.newsfeed.user.entity.User;
@@ -23,18 +26,23 @@ public class CommentService {
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
 
+
     @Transactional
     public CommentResponse create(Long feedId, Long userId, CommentCreateRequest request) {
 
+        if (userId == null) {
+            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
+        }
+
         if (request.getContent() == null || request.getContent().trim().isEmpty()) {
-            throw new IllegalArgumentException("댓글 내용을 입력해 주세요.");
+            throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
 
         Feed feed = feedRepository.findById(feedId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 피드입니다."));
+                .orElseThrow(() -> new MyCustomException(ErrorCode.FEED_NOT_FOUND));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("로그인이 필요합니다."));
+                .orElseThrow(() -> new MyCustomException(ErrorCode.LOGIN_REQUIRED));
 
         Comment comment = new Comment(user, feed, request.getContent());
         Comment savedComment = commentRepository.save(comment);
@@ -49,10 +57,13 @@ public class CommentService {
         );
     }
 
+
     @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByFeed(Long feedId) {
-        feedRepository.findById(feedId)
-                .orElseThrow(() -> new IllegalArgumentException("Feed Not Found"));
+
+        if(!feedRepository.existsById(feedId)) {
+            throw new MyCustomException(ErrorCode.FEED_NOT_FOUND);
+        }
 
         List<Comment> comments = commentRepository.findByFeed_FeedId(feedId);
 
@@ -71,5 +82,55 @@ public class CommentService {
     }
 
 
+    @Transactional
+    public CommentResponse update(Long commentId, Long userId, CommentUpdateRequest request) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
 
+        if (userId == null) {
+            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
+        }
+
+        Long commentAuthorId = comment.getUser().getId();
+        Long feedAuthorId = comment.getFeed().getUser().getId();
+
+        if (!userId.equals(commentAuthorId) && !userId.equals(feedAuthorId)) {
+            throw new MyCustomException(ErrorCode.UNAUTHORIZED_COMMENT_UPDATE);
+        }
+
+        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+            throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
+        }
+
+        comment.updateContent(request.getContent());
+
+        return new CommentResponse(
+                comment.getId(),
+                comment.getFeed().getFeedId(),
+                comment.getUser().getUserName(),
+                comment.getContent(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        );
+    }
+
+
+    @Transactional
+    public void delete(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (userId == null) {
+            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
+        }
+
+        Long commentAuthorId = comment.getUser().getId();
+        Long feedAuthorId = comment.getFeed().getUser().getId();
+
+        if(!userId.equals(commentAuthorId) && !userId.equals(feedAuthorId)) {
+            throw new MyCustomException(ErrorCode.UNAUTHORIZED_COMMENT_DELETE);
+        }
+
+        commentRepository.delete(comment);
+    }
 }

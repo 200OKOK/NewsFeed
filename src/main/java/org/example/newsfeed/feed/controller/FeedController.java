@@ -2,6 +2,7 @@ package org.example.newsfeed.feed.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.feed.dto.*;
 import org.example.newsfeed.feed.service.FeedService;
@@ -24,7 +25,7 @@ public class FeedController {
     @PostMapping("/feeds")
     public ResponseEntity<FeedSaveResponseDto> save(
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
-            @RequestBody FeedSaveRequestDto dto
+            @RequestBody @Valid FeedSaveRequestDto dto
     ){
 
         return ResponseEntity.ok(feedService.save(userId, dto));
@@ -54,19 +55,19 @@ public class FeedController {
     public ResponseEntity<FeedUpdateResponseDto> update(
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable Long feedId,
-            @RequestBody FeedUpdateRequestDto dto
+            @RequestBody @Valid FeedUpdateRequestDto dto
     ) {
         return ResponseEntity.ok(feedService.update(feedId, userId, dto));
     }
 
     // 게시물 삭제
     @DeleteMapping("/feeds/{feedId}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<String> delete(
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable Long feedId
     ) {
-        feedService.deleteById(feedId, userId);
-        return ResponseEntity.ok().build();
+        String message = feedService.deleteById(feedId, userId);
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("/feedsDate")

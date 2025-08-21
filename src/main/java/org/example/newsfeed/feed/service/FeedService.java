@@ -13,6 +13,7 @@ import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,10 +45,6 @@ public class FeedService {
         User user = getActiveUser(userId);
 
         Feed feed = new Feed(user, dto.getTitle(), dto.getContent());
-        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty() ||
-                dto.getContent() == null || dto.getContent().trim().isEmpty()) {
-            throw new MyCustomException(TITLE_OR_CONTENT_REQUIRED);
-        }
 
         feedRepository.save(feed);
 
@@ -57,7 +54,8 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getUpdatedAt()
+                feed.getUpdatedAt(),
+                "게시글 등록에 성공했습니다."
         );
     }
 
@@ -100,13 +98,14 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getUpdatedAt()
+                feed.getUpdatedAt(),
+                "게시글 수정에 성공했습니다."
         );
     }
 
     // 게시글 삭제
     @Transactional
-    public void deleteById(Long feedId, Long userId) {
+    public String deleteById(Long feedId, Long userId) {
         validateLogin(userId);
         User user = getActiveUser(userId);
         Feed feed = feedRepository.findById(feedId)
@@ -117,6 +116,7 @@ public class FeedService {
         }
 
         feedRepository.delete(feed);
+        return "게시글이 정상적으로 삭제되었습니다.";
     }
 
     // 사용자 검증 메서드(유저 존재 여부, 유저 활성화 여부 확인)
