@@ -11,15 +11,15 @@ public class CommentResponse {
     private final String username;
     private final String content;
     private final LocalDateTime createdAt;
-    private final LocalDateTime modifiedAt;
+    private final LocalDateTime updatedAt;
 
-    public CommentResponse(Long id, Long feedId, String username, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CommentResponse(Long id, Long feedId, String username, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.feedId = feedId;
         this.username = username;
         this.content = content;
         this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+        this.updatedAt = updatedAt;
     }
 }
 

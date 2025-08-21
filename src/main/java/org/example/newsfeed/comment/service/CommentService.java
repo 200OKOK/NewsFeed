@@ -45,7 +45,7 @@ public class CommentService {
                 savedComment.getUser().getUserName(),  // user.getUsername() 으로 생략 가능 (같은 객체를 참조하기 때문)
                 savedComment.getContent(),
                 savedComment.getCreatedAt(),
-                savedComment.getModifiedAt()
+                savedComment.getUpdatedAt()
         );
     }
 
@@ -64,7 +64,7 @@ public class CommentService {
                     c.getUser().getUserName(),
                     c.getContent(),
                     c.getCreatedAt(),
-                    c.getModifiedAt()
+                    c.getUpdatedAt()
             ));
         }
         return responses;
