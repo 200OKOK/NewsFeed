@@ -22,4 +22,6 @@ public class BaseEntity {
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
+
+
 }

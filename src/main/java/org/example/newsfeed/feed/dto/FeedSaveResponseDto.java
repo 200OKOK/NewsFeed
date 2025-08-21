@@ -22,4 +22,3 @@ public class FeedSaveResponseDto {
         this.updatedAt = updatedAt;
     }
 }
-
