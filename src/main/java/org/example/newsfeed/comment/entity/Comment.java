@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 import org.example.newsfeed.common.BaseEntity;
 import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.user.entity.User;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
