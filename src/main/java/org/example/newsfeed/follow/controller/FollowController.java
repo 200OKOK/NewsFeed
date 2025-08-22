@@ -24,9 +24,6 @@ public class FollowController {
             HttpServletRequest request
     ) {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("로그인 유저") == null) {
-            return ResponseEntity.status(401).body("로그인이 필요합니다.");
-        }
 
         Long followerId = (Long) session.getAttribute("로그인 유저");
 
@@ -41,9 +38,6 @@ public class FollowController {
             HttpServletRequest request
     ) {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("로그인 유저") == null) {
-            return ResponseEntity.status(401).body("로그인이 필요합니다.");
-        }
 
         Long followerId = (Long) session.getAttribute("로그인 유저");
 
@@ -55,9 +49,6 @@ public class FollowController {
     @GetMapping
     public ResponseEntity<List<FollowingResponse>> getFollowingUsers(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("로그인 유저") == null) {
-            return ResponseEntity.status(401).body(null);
-        }
 
         Long followerId = (Long) session.getAttribute("로그인 유저");
         List<FollowingResponse> followingList = followService.getFollowingUsers(followerId);
@@ -71,9 +62,6 @@ public class FollowController {
             HttpServletRequest request
     ) {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("로그인 유저") == null) {
-            return ResponseEntity.status(401).body(null);
-        }
 
         Long followerId = (Long) session.getAttribute("로그인 유저");
         FollowingResponse followingUser = followService.getFollowingUserById(followingId, followerId);
@@ -84,9 +72,6 @@ public class FollowController {
     @GetMapping("/followers")
     public ResponseEntity<List<FollowerResponse>> getFollowerUsers(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("로그인 유저") == null) {
-            return ResponseEntity.status(401).body(null);
-        }
 
         Long followingId = (Long) session.getAttribute("로그인 유저");
         List<FollowerResponse> followerList = followService.getFollowerUsers(followingId);
