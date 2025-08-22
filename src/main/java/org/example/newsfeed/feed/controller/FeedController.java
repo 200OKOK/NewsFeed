@@ -6,14 +6,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.feed.dto.*;
 import org.example.newsfeed.feed.service.FeedService;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,21 +31,14 @@ public class FeedController {
 
     //게시물 전체 조회
     @GetMapping("/feeds/page/{pageNum}")
-    public ResponseEntity<Map<String, Object>> findAllPage(
+    public ResponseEntity<PageResponseDto<PageResponseDto>> findAllPage(
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable int pageNum,
             @RequestParam(defaultValue = "10") int size
 
     ) {
-        Page<FeedPageResponseDto> result = feedService.findAllPage(pageNum, size, userId);
-        return ResponseEntity.ok(
-                Map.of(
-                        "page", result.getNumber() + 1, // 1부터 시작하는 페이지 번호로 조정
-                        "totalPages", result.getTotalPages(),
-                        "posts", result.getContent()
-                )
-        );
-
+        PageResponseDto<PageResponseDto> result = feedService.findAllPage(pageNum, size, userId);
+        return ResponseEntity.ok(result);
     }
 
     // 게시물 수정
@@ -55,19 +46,19 @@ public class FeedController {
     public ResponseEntity<FeedUpdateResponseDto> update(
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable Long feedId,
-            @RequestBody @Valid FeedUpdateRequestDto dto
+            @RequestBody FeedUpdateRequestDto dto
     ) {
         return ResponseEntity.ok(feedService.update(feedId, userId, dto));
     }
 
     // 게시물 삭제
     @DeleteMapping("/feeds/{feedId}")
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<String> delete(
             @SessionAttribute(name = "로그인 유저", required = false) Long userId,
             @PathVariable Long feedId
     ) {
-        feedService.deleteById(feedId, userId);
-        return ResponseEntity.ok().build();
+        String message = feedService.deleteById(feedId, userId);
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("/feedsDate")

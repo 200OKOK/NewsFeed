@@ -1,6 +1,7 @@
 package org.example.newsfeed.feed.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.newsfeed.common.BaseEntity;
@@ -9,8 +10,7 @@ import org.example.newsfeed.user.entity.User;
 
 @Getter
 @Entity
-@NoArgsConstructor
-
+@NoArgsConstructor(access=AccessLevel.PROTECTED)
 //@Table(name = "feeds")
 public class Feed extends BaseEntity {
 

@@ -13,6 +13,7 @@ import org.example.newsfeed.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +44,11 @@ public class FeedService {
 
         User user = getActiveUser(userId);
 
+        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty() ||
+                dto.getContent() == null || dto.getContent().trim().isEmpty()) {
+            throw new MyCustomException(TITLE_OR_CONTENT_REQUIRED);
+        }
+
         Feed feed = new Feed(user, dto.getTitle(), dto.getContent());
 
         feedRepository.save(feed);
@@ -53,26 +59,34 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getUpdatedAt()
+                feed.getUpdatedAt(),
+                "게시글 등록에 성공했습니다."
         );
     }
 
     //게시글 전체 조회
     @Transactional(readOnly = true)
-    public Page<FeedPageResponseDto> findAllPage(int page, int size, Long userId) {
+    public PageResponseDto findAllPage(int page, int size, Long userId) {
         validateLogin(userId);
         int adjustedPage = (page > 0) ? page - 1 : 0;
         PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
         Page<Feed> feedPage = feedRepository.findAll(pageable);
 
-        return feedPage.map(feed -> new FeedPageResponseDto(
+        return PageResponseDto.of(
+                feedPage.getPageable().getPageNumber(),
+                feedPage.getPageable().getPageSize(),
+                feedPage.getTotalPages(),
+                feedPage.getTotalElements(),
+                feedPage.get().map(feed->new FeedPageResponseDto(
                 feed.getFeedId(),
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
                 feed.getUpdatedAt(),
                 feed.getUser().getUserName()
-        ));
+        ))
+        );
+
     }
 
     // 게시글 수정
@@ -81,6 +95,11 @@ public class FeedService {
         validateLogin(userId);
 
         User user = getActiveUser(userId);
+
+        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty() ||
+                dto.getContent() == null || dto.getContent().trim().isEmpty()) {
+            throw new MyCustomException(TITLE_OR_CONTENT_REQUIRED);
+        }
 
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new MyCustomException(FEED_NOT_FOUND));
@@ -96,13 +115,14 @@ public class FeedService {
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
-                feed.getUpdatedAt()
+                feed.getUpdatedAt(),
+                "게시글 수정에 성공했습니다."
         );
     }
 
     // 게시글 삭제
     @Transactional
-    public void deleteById(Long feedId, Long userId) {
+    public String deleteById(Long feedId, Long userId) {
         validateLogin(userId);
         User user = getActiveUser(userId);
         Feed feed = feedRepository.findById(feedId)
@@ -113,6 +133,7 @@ public class FeedService {
         }
 
         feedRepository.delete(feed);
+        return "게시글이 정상적으로 삭제되었습니다.";
     }
 
     // 사용자 검증 메서드(유저 존재 여부, 유저 활성화 여부 확인)
@@ -131,14 +152,13 @@ public class FeedService {
 
     public List<FeedByDateResponseDto> getFeedByDate(LocalDate searchStartDate, LocalDate searchEndDate) {
 
-
-        //엔티티가 LocalDateTIme이라서 맞춰줘야함
+        //엔티티가 LocalDateTime이라서 맞춰줘야함
         LocalDateTime start = searchStartDate.atStartOfDay();           // 00:00:00
         LocalDateTime end = searchEndDate.atTime(LocalTime.MAX);        // 23:59:59.999999999
         List<Feed> feedList = feedRepository.findByCreatedAtBetween(start,end);
 
         return feedList.stream()
-                .map(feed -> new FeedByDateResponseDto(
+                .map(feed -> FeedByDateResponseDto.of(
                         feed.getFeedId(),
                         feed.getUser().getUserId(),
                         feed.getTitle(),
