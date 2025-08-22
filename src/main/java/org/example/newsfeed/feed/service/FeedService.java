@@ -40,7 +40,7 @@ public class FeedService {
     @Transactional
     public FeedSaveResponseDto save(Long userId, FeedSaveRequestDto dto) {
 
-        validateLogin(userId);
+        //validateLogin(userId);
 
         User user = getActiveUser(userId);
 
@@ -67,13 +67,13 @@ public class FeedService {
     //게시글 전체 조회
     @Transactional(readOnly = true)
     public PageResponseDto findAllPage(int page, int size, Long userId) {
-        validateLogin(userId);
+        //validateLogin(userId);
         int adjustedPage = (page > 0) ? page - 1 : 0;
         PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
         Page<Feed> feedPage = feedRepository.findAll(pageable);
 
         return PageResponseDto.of(
-                feedPage.getPageable().getPageNumber(),
+                feedPage.getPageable().getPageNumber()+1,
                 feedPage.getPageable().getPageSize(),
                 feedPage.getTotalPages(),
                 feedPage.getTotalElements(),
@@ -92,7 +92,7 @@ public class FeedService {
     // 게시글 수정
     @Transactional
     public FeedUpdateResponseDto update(Long feedId, Long userId, FeedUpdateRequestDto dto) {
-        validateLogin(userId);
+        //validateLogin(userId);
 
         User user = getActiveUser(userId);
 
@@ -123,7 +123,7 @@ public class FeedService {
     // 게시글 삭제
     @Transactional
     public String deleteById(Long feedId, Long userId) {
-        validateLogin(userId);
+        //validateLogin(userId);
         User user = getActiveUser(userId);
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new MyCustomException(FEED_NOT_FOUND));
@@ -143,12 +143,12 @@ public class FeedService {
                 .orElseThrow(() -> new MyCustomException(USER_NOT_FOUND));
     }
 
-    //로그인을 안 했을 때 예외 발생
-    private void validateLogin(Long userId) {
-        if (userId == null) {
-            throw new MyCustomException(LOGIN_REQUIRED);
-        }
-    }
+//    //로그인을 안 했을 때 예외 발생
+//    private void validateLogin(Long userId) {
+//        if (userId == null) {
+//            throw new MyCustomException(LOGIN_REQUIRED);
+//        }
+//    }
 
     public List<FeedByDateResponseDto> getFeedByDate(LocalDate searchStartDate, LocalDate searchEndDate) {
 

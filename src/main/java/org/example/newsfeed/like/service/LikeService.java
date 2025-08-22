@@ -11,6 +11,7 @@ import org.example.newsfeed.feed.entity.Feed;
 import org.example.newsfeed.feed.repository.FeedRepository;
 import org.example.newsfeed.like.dto.CreateCommentLikeResp;
 import org.example.newsfeed.like.dto.CreateFeedLikeResp;
+import org.example.newsfeed.like.dto.GetCommentLikeCountResp;
 import org.example.newsfeed.like.dto.GetFeedLikeCountResp;
 import org.example.newsfeed.like.entity.CommentLike;
 import org.example.newsfeed.like.entity.Feedlike;
@@ -73,10 +74,9 @@ public class LikeService {
         boolean exists = commentLikeRepository.existsByUser_IdAndComment_Id(userId,commentId);
 
         if(!exists){
-//            Comment가 완성되면 풀기
-//            if(Objects.equals(userId,comment.getUser().getId())){ 
-//                throw new MyCustomException(SELF_COMMENT_LIKE_NOT_ALLOWED);
-//            }
+            if(Objects.equals(userId,comment.getUser().getId())){
+                throw new MyCustomException(SELF_COMMENT_LIKE_NOT_ALLOWED);
+            }
             CommentLike commentLike = commentLikeRepository.save(new CommentLike(user,comment));
             return new CreateCommentLikeResp(user.getId(),comment.getId(),commentLike.getCreateAt());
         }else{
@@ -86,11 +86,11 @@ public class LikeService {
     }
 
     @Transactional
-    public GetFeedLikeCountResp commentLikeCount(Long commentId) {
+    public GetCommentLikeCountResp commentLikeCount(Long commentId) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new MyCustomException(COMMENT_NOT_FOUND));
         int commentCount = commentLikeRepository.countCommentLikeByComment_Id(commentId);
 
-        return new GetFeedLikeCountResp(commentId,commentCount);
+        return new GetCommentLikeCountResp(commentId,commentCount);
     }
 }

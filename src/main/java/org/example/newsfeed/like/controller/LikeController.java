@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.like.dto.CreateCommentLikeResp;
 import org.example.newsfeed.like.dto.CreateFeedLikeResp;
+import org.example.newsfeed.like.dto.GetCommentLikeCountResp;
 import org.example.newsfeed.like.dto.GetFeedLikeCountResp;
 import org.example.newsfeed.like.service.LikeService;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class LikeController {
     }
 
     @GetMapping("/comments/{commentId}/likes")
-    public ResponseEntity<GetFeedLikeCountResp> getAllCommentLikes(@PathVariable Long commentId){
+    public ResponseEntity<GetCommentLikeCountResp> getAllCommentLikes(@PathVariable Long commentId){
 
         return ResponseEntity.ok(likeService.commentLikeCount(commentId));
     }
