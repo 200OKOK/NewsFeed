@@ -30,10 +30,6 @@ public class CommentService {
     @Transactional
     public CommentResponse create(Long feedId, Long userId, CommentCreateRequest request) {
 
-        if (userId == null) {
-            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
-        }
-
         if (request.getContent() == null || request.getContent().trim().isEmpty()) {
             throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
@@ -81,10 +77,6 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (userId == null) {
-            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
-        }
-
         Long commentAuthorId = comment.getUser().getId();
         Long feedAuthorId = comment.getFeed().getUser().getId();
 
@@ -98,7 +90,6 @@ public class CommentService {
         }
 
         comment.updateContent(newContent.trim());
-
         return CommentResponse.of(comment);
     }
 
@@ -108,10 +99,6 @@ public class CommentService {
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
-
-        if (userId == null) {
-            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
-        }
 
         Long commentAuthorId = comment.getUser().getId();
         Long feedAuthorId = comment.getFeed().getUser().getId();

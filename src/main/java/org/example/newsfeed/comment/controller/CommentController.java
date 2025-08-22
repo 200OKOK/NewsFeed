@@ -22,7 +22,7 @@ public class CommentController {
     @PostMapping("/feeds/{feedId}/comments")
     public ResponseEntity<CommentResponse> createComment(
             @PathVariable Long feedId,
-            @SessionAttribute(name = "로그인 유저", required = false) Long userId,
+            @SessionAttribute("로그인 유저") Long userId,
             @Valid @RequestBody CommentCreateRequest request
     ) {
 
@@ -43,7 +43,7 @@ public class CommentController {
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<CommentResponse> updateComment(
             @PathVariable Long commentId,
-            @SessionAttribute(name = "로그인 유저", required = false) Long userId,
+            @SessionAttribute("로그인 유저") Long userId,
             @RequestBody CommentUpdateRequest request
     ) {
         CommentResponse updatedComment = commentService.update(commentId, userId, request);
@@ -54,7 +54,7 @@ public class CommentController {
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<CommentResponse> deleteComment(
             @PathVariable Long commentId,
-            @SessionAttribute(name = "로그인 유저", required = false) Long userId
+            @SessionAttribute("로그인 유저") Long userId
     ) {
         commentService.delete(commentId, userId);
         return ResponseEntity.noContent().build();
