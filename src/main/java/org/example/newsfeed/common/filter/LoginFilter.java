@@ -22,7 +22,7 @@ public class LoginFilter implements Filter {
 
         if (!isWhiteList(requestURI)) {
             HttpSession session = httpRequest.getSession(false);
-            if (session == null || session.getAttribute("LOGIN_DIRECTOR") == null) {
+            if (session == null || session.getAttribute("로그인 유저") == null) {
                 throw new RuntimeException("로그인 해주세요.");
             }
         }
