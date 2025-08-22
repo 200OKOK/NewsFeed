@@ -1,8 +1,10 @@
 package org.example.newsfeed.common.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.example.newsfeed.common.exception.ErrorResponse;
 import org.springframework.util.PatternMatchUtils;
 
 import java.io.IOException;
@@ -23,7 +25,14 @@ public class LoginFilter implements Filter {
         if (!isWhiteList(requestURI)) {
             HttpSession session = httpRequest.getSession(false);
             if (session == null || session.getAttribute("로그인 유저") == null) {
+<<<<<<< Updated upstream
                 throw new RuntimeException("로그인 해주세요.");
+=======
+                ObjectMapper mapper = new ObjectMapper();
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write(mapper.writeValueAsString(new ErrorResponse("USR-009", "로그인이 필요합니다.", httpRequest.getRequestURI())));
+                return;
+>>>>>>> Stashed changes
             }
         }
         chain.doFilter(request, response);
