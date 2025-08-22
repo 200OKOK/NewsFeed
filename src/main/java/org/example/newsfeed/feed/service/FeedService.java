@@ -44,6 +44,11 @@ public class FeedService {
 
         User user = getActiveUser(userId);
 
+        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty() ||
+                dto.getContent() == null || dto.getContent().trim().isEmpty()) {
+            throw new MyCustomException(TITLE_OR_CONTENT_REQUIRED);
+        }
+
         Feed feed = new Feed(user, dto.getTitle(), dto.getContent());
 
         feedRepository.save(feed);
@@ -61,20 +66,27 @@ public class FeedService {
 
     //게시글 전체 조회
     @Transactional(readOnly = true)
-    public Page<FeedPageResponseDto> findAllPage(int page, int size, Long userId) {
+    public PageResponseDto findAllPage(int page, int size, Long userId) {
         validateLogin(userId);
         int adjustedPage = (page > 0) ? page - 1 : 0;
         PageRequest pageable = PageRequest.of(adjustedPage, size, Sort.by("createdAt").descending());
         Page<Feed> feedPage = feedRepository.findAll(pageable);
 
-        return feedPage.map(feed -> new FeedPageResponseDto(
+        return PageResponseDto.of(
+                feedPage.getPageable().getPageNumber(),
+                feedPage.getPageable().getPageSize(),
+                feedPage.getTotalPages(),
+                feedPage.getTotalElements(),
+                feedPage.get().map(feed->new FeedPageResponseDto(
                 feed.getFeedId(),
                 feed.getTitle(),
                 feed.getContent(),
                 feed.getCreatedAt(),
                 feed.getUpdatedAt(),
                 feed.getUser().getUserName()
-        ));
+        ))
+        );
+
     }
 
     // 게시글 수정
@@ -83,6 +95,11 @@ public class FeedService {
         validateLogin(userId);
 
         User user = getActiveUser(userId);
+
+        if (dto.getTitle() == null || dto.getTitle().trim().isEmpty() ||
+                dto.getContent() == null || dto.getContent().trim().isEmpty()) {
+            throw new MyCustomException(TITLE_OR_CONTENT_REQUIRED);
+        }
 
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(() -> new MyCustomException(FEED_NOT_FOUND));
@@ -135,14 +152,13 @@ public class FeedService {
 
     public List<FeedByDateResponseDto> getFeedByDate(LocalDate searchStartDate, LocalDate searchEndDate) {
 
-
-        //엔티티가 LocalDateTIme이라서 맞춰줘야함
+        //엔티티가 LocalDateTime이라서 맞춰줘야함
         LocalDateTime start = searchStartDate.atStartOfDay();           // 00:00:00
         LocalDateTime end = searchEndDate.atTime(LocalTime.MAX);        // 23:59:59.999999999
         List<Feed> feedList = feedRepository.findByCreatedAtBetween(start,end);
 
         return feedList.stream()
-                .map(feed -> new FeedByDateResponseDto(
+                .map(feed -> FeedByDateResponseDto.of(
                         feed.getFeedId(),
                         feed.getUser().getUserId(),
                         feed.getTitle(),
