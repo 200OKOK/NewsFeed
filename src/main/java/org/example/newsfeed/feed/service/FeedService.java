@@ -73,10 +73,10 @@ public class FeedService {
         Page<Feed> feedPage = feedRepository.findAll(pageable);
 
         return PageResponseDto.of(
-                feedPage.getPageable().getPageNumber(), //page
-                feedPage.getPageable().getPageSize(), //1 page size
-                feedPage.getTotalPages(), //all page count
-                feedPage.getTotalElements(), // all element count
+                feedPage.getPageable().getPageNumber(),
+                feedPage.getPageable().getPageSize(),
+                feedPage.getTotalPages(),
+                feedPage.getTotalElements(),
                 feedPage.get().map(feed->new FeedPageResponseDto(
                 feed.getFeedId(),
                 feed.getTitle(),
