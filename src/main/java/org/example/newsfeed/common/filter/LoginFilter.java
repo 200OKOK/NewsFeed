@@ -8,7 +8,7 @@ import org.springframework.util.PatternMatchUtils;
 import java.io.IOException;
 
 public class LoginFilter implements Filter {
-    private static final String[] WHITE_LIST = {"/", "/signup", "/login"};
+    private static final String[] WHITE_LIST = {"/", "/signup", "/login","/logout"};
 
     @Override
     public void doFilter(
