@@ -1,9 +1,13 @@
 package org.example.newsfeed.comment.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.newsfeed.comment.entity.Comment;
+
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class CommentResponse {
 
     private final Long id;
@@ -13,13 +17,15 @@ public class CommentResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public CommentResponse(Long id, Long feedId, String username, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.feedId = feedId;
-        this.username = username;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public static CommentResponse of(Comment comment) {
+        return new CommentResponse(
+                comment.getId(),
+                comment.getFeed().getFeedId(),
+                comment.getUser().getUserName(),
+                comment.getContent(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        );
     }
 }
 

@@ -2,6 +2,7 @@ package org.example.newsfeed.common.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.util.PatternMatchUtils;
 
@@ -18,12 +19,14 @@ public class LoginFilter implements Filter {
     ) throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         String requestURI = httpRequest.getRequestURI();
 
         if (!isWhiteList(requestURI)) {
             HttpSession session = httpRequest.getSession(false);
             if (session == null || session.getAttribute("로그인 유저") == null) {
-                throw new RuntimeException("로그인 해주세요.");
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인 해주세요.");
+                return;
             }
         }
         chain.doFilter(request, response);
