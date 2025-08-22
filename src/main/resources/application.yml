@@ -3,11 +3,6 @@ spring:
     url: jdbc:mysql://localhost:3306/${DB_NAME}
     username: ${DB_USER_NAME}
     password: ${DB_PASSWORD}
-    url: jdbc:mysql://localhost:3306/newsfeed
-    username: root
-
-    password: root1123
-    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
