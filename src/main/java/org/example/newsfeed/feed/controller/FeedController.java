@@ -74,9 +74,6 @@ public class FeedController {
     @GetMapping("/feeds/following")
     public ResponseEntity<List<FeedResponseDto>> getFollowingUsersPosts(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("로그인 유저") == null) {
-            return ResponseEntity.status(401).body(null);
-        }
         Long userId = (Long) session.getAttribute("로그인 유저");
 
         List<FeedResponseDto> feeds = feedService.getFollowingFeeds(userId);
