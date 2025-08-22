@@ -22,7 +22,6 @@ public enum ErrorCode {
     UNAUTHORIZED_FEED_DELETE("FED-003", "본인이 작성한 게시물만 삭제할 수 있습니다."),
     TITLE_OR_CONTENT_REQUIRED("FED-002", "제목과 내용은 비어 있을 수 없습니다."),
 
-
     COMMENT_NOT_FOUND("CMT-001","해당 댓글 찾을 수 없습니다."),
     UNAUTHORIZED_COMMENT_UPDATE("CMT-002", "해당 댓글의 수정 권한이 없습니다."),
     UNAUTHORIZED_COMMENT_DELETE("CMT-003", "해당 댓글의 삭제 권한이 없습니다."),
