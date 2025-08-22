@@ -30,10 +30,6 @@ public class CommentService {
     @Transactional
     public CommentResponse create(Long feedId, Long userId, CommentCreateRequest request) {
 
-        if (userId == null) {
-            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
-        }
-
         if (request.getContent() == null || request.getContent().trim().isEmpty()) {
             throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
@@ -42,19 +38,12 @@ public class CommentService {
                 .orElseThrow(() -> new MyCustomException(ErrorCode.FEED_NOT_FOUND));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new MyCustomException(ErrorCode.LOGIN_REQUIRED));
+                .orElseThrow(() -> new MyCustomException(ErrorCode.USER_NOT_FOUND));
 
         Comment comment = new Comment(user, feed, request.getContent());
         Comment savedComment = commentRepository.save(comment);
 
-        return new CommentResponse(
-                savedComment.getId(),
-                savedComment.getFeed().getFeedId(),    // feed.getId(),
-                savedComment.getUser().getUserName(),  // user.getUsername() 으로 생략 가능 (같은 객체를 참조하기 때문)
-                savedComment.getContent(),
-                savedComment.getCreatedAt(),
-                savedComment.getUpdatedAt()
-        );
+        return CommentResponse.of(savedComment);
     }
 
 
@@ -84,12 +73,9 @@ public class CommentService {
 
     @Transactional
     public CommentResponse update(Long commentId, Long userId, CommentUpdateRequest request) {
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
-
-        if (userId == null) {
-            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
-        }
 
         Long commentAuthorId = comment.getUser().getId();
         Long feedAuthorId = comment.getFeed().getUser().getId();
@@ -98,31 +84,21 @@ public class CommentService {
             throw new MyCustomException(ErrorCode.UNAUTHORIZED_COMMENT_UPDATE);
         }
 
-        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+        String newContent = request.getContent();
+        if (newContent == null || newContent.trim().isEmpty()) {
             throw new MyCustomException(ErrorCode.COMMENT_CONTENT_REQUIRED);
         }
 
-        comment.updateContent(request.getContent());
-
-        return new CommentResponse(
-                comment.getId(),
-                comment.getFeed().getFeedId(),
-                comment.getUser().getUserName(),
-                comment.getContent(),
-                comment.getCreatedAt(),
-                comment.getUpdatedAt()
-        );
+        comment.updateContent(newContent.trim());
+        return CommentResponse.of(comment);
     }
 
 
     @Transactional
     public void delete(Long commentId, Long userId) {
+
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new MyCustomException(ErrorCode.COMMENT_NOT_FOUND));
-
-        if (userId == null) {
-            throw new MyCustomException(ErrorCode.LOGIN_REQUIRED);
-        }
 
         Long commentAuthorId = comment.getUser().getId();
         Long feedAuthorId = comment.getFeed().getUser().getId();
