@@ -1,11 +1,12 @@
 package org.example.newsfeed.feed.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class FeedByDateResponseDto {
 
@@ -15,4 +16,8 @@ public class FeedByDateResponseDto {
     private final String content;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+
+    public static FeedByDateResponseDto of(Long feedId, String userId, String title, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return new FeedByDateResponseDto(feedId, userId, title, content, createdAt, updatedAt);
+    }
 }

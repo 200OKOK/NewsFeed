@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/newsfeed?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ????
-    password: ????
+    url: jdbc:mysql://localhost:3306/feed
+    username: root
+    password: root1123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
