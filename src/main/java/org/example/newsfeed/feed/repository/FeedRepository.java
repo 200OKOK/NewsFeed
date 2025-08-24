@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface FeedRepository extends JpaRepository<Feed, Long> {
+
     List<Feed> findByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
     List<Feed> findAllByUser_IdInOrderByCreatedAtDesc(List<Long> userIds);
 }
