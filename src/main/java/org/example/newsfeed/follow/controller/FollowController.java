@@ -21,11 +21,8 @@ public class FollowController {
     @PostMapping("/{followingId}")
     public ResponseEntity<String> followUser(
             @PathVariable("followingId") Long followingId,
-            HttpServletRequest request
+            @SessionAttribute(name = "로그인 유저", required = false) Long followerId
     ) {
-        HttpSession session = request.getSession(false);
-        Long followerId = (Long) session.getAttribute("로그인 유저");
-
         followService.followUser(followingId, followerId);
         return ResponseEntity.ok().body("팔로우 되었습니다.");
     }
@@ -34,20 +31,17 @@ public class FollowController {
     @DeleteMapping("/{followingId}")
     public ResponseEntity<String> unfollowUser(
             @PathVariable("followingId") Long followingId,
-            HttpServletRequest request
+            @SessionAttribute(name = "로그인 유저", required = false) Long followerId
     ) {
-        HttpSession session = request.getSession(false);
-        Long followerId = (Long) session.getAttribute("로그인 유저");
-
         followService.unfollowUser(followingId, followerId);
         return ResponseEntity.ok().body("팔로우가 취소되었습니다.");
     }
 
     // 팔로우한 유저 목록 전체 조회 기능
     @GetMapping
-    public ResponseEntity<List<FollowingResponse>> getFollowingUsers(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        Long followerId = (Long) session.getAttribute("로그인 유저");
+    public ResponseEntity<List<FollowingResponse>> getFollowingUsers(
+            @SessionAttribute(name = "로그인 유저", required = false) Long followerId
+    ) {
         List<FollowingResponse> followingList = followService.getFollowingUsers(followerId);
         return ResponseEntity.ok(followingList);
     }
@@ -56,20 +50,18 @@ public class FollowController {
     @GetMapping("/{followingId}")
     public ResponseEntity<FollowingResponse> getFollowingUserById(
             @PathVariable("followingId") Long followingId,
-            HttpServletRequest request
+            @SessionAttribute(name = "로그인 유저", required = false) Long followerId
     ) {
-        HttpSession session = request.getSession(false);
-        Long followerId = (Long) session.getAttribute("로그인 유저");
         FollowingResponse followingUser = followService.getFollowingUserById(followingId, followerId);
         return ResponseEntity.ok(followingUser);
     }
 
     // 나를 팔로우하는 유저 목록 조회
     @GetMapping("/followers")
-    public ResponseEntity<List<FollowerResponse>> getFollowerUsers(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        Long followingId = (Long) session.getAttribute("로그인 유저");
-        List<FollowerResponse> followerList = followService.getFollowerUsers(followingId);
+    public ResponseEntity<List<FollowerResponse>> getFollowerUsers(
+            @SessionAttribute(name = "로그인 유저", required = false) Long followerId
+    ) {
+        List<FollowerResponse> followerList = followService.getFollowerUsers(followerId);
         return ResponseEntity.ok(followerList);
     }
 

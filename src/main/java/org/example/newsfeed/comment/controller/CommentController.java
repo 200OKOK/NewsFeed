@@ -19,6 +19,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    //댓글 생성
     @PostMapping("/feeds/{feedId}/comments")
     public ResponseEntity<CommentResponse> createComment(
             @PathVariable Long feedId,
@@ -31,6 +32,7 @@ public class CommentController {
         return ResponseEntity.created(location).body(response);
     }
 
+    //댓글 조회
     @GetMapping("/feeds/{feedId}/comments")
     public ResponseEntity<List<CommentResponse>> getAllComments(
             @PathVariable Long feedId
@@ -39,7 +41,7 @@ public class CommentController {
         return ResponseEntity.ok(responses);
     }
 
-
+    //댓글 수정
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<CommentResponse> updateComment(
             @PathVariable Long commentId,
@@ -50,7 +52,7 @@ public class CommentController {
         return ResponseEntity.ok(updatedComment);
     }
 
-
+    //댓글 삭제
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<CommentResponse> deleteComment(
             @PathVariable Long commentId,

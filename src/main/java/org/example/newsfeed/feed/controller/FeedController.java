@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,9 +61,13 @@ public class FeedController {
         return ResponseEntity.ok(message);
     }
 
+    //특정 기간 피드 조회
     @GetMapping("/feedsDate")
-    public ResponseEntity<List<FeedByDateResponseDto>> getFeedByDate(@RequestParam(value = "searchStartDate", required = false, defaultValue = "19000101") @DateTimeFormat(pattern = "yyyyMMdd") LocalDate searchStartDate,
-                                                                     @RequestParam(value = "searchEndDate", required = false, defaultValue = "99991231") @DateTimeFormat(pattern = "yyyyMMdd") LocalDate searchEndDate
+    public ResponseEntity<List<FeedByDateResponseDto>> getFeedByDate(
+            @RequestParam(value = "searchStartDate", required = false, defaultValue = "19000101")
+            @DateTimeFormat(pattern = "yyyyMMdd") LocalDate searchStartDate,
+            @RequestParam(value = "searchEndDate", required = false, defaultValue = "99991231")
+            @DateTimeFormat(pattern = "yyyyMMdd") LocalDate searchEndDate
 
     ) {
         List<FeedByDateResponseDto> feedList = feedService.getFeedByDate(searchStartDate, searchEndDate);
@@ -73,12 +76,11 @@ public class FeedController {
 
     // 팔로우한 유저의 게시물 전체 조회
     @GetMapping("/feeds/following")
-    public ResponseEntity<List<FeedResponseDto>> getFollowingUsersPosts(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        Long userId = (Long) session.getAttribute("로그인 유저");
+    public ResponseEntity<List<FeedResponseDto>> getFollowingUsersPosts(
+            @SessionAttribute(name = "로그인 유저", required = false) Long userId){
 
         List<FeedResponseDto> feeds = feedService.getFollowingFeeds(userId);
         return ResponseEntity.ok(feeds);
-    }
 
+    }
 }
