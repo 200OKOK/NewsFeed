@@ -17,26 +17,37 @@ public class LikeController {
 
     private final LikeService likeService;
 
+    //게시글 좋아요 생성
     @PostMapping("/feeds/{feedId}/likes")
-    public ResponseEntity<CreateFeedLikeResp> createLike(@PathVariable Long feedId,@SessionAttribute("로그인 유저") Long userId){
+    public ResponseEntity<CreateFeedLikeResp> createLike(
+            @PathVariable Long feedId,
+            @SessionAttribute("로그인 유저") Long userId
+    ){
        return ResponseEntity.ok(likeService.createLike(userId,feedId));
     }
 
+    //게시글 좋아요 조회
     @GetMapping("/feeds/{feedId}/likes")
-    public ResponseEntity<GetFeedLikeCountResp> getAllLikes(@PathVariable Long feedId){
-
+    public ResponseEntity<GetFeedLikeCountResp> getAllLikes(
+            @PathVariable Long feedId
+    ){
         return ResponseEntity.ok(likeService.feedLikeCount(feedId));
     }
 
+    //댓글 좋아요 생성
     @PostMapping("/comments/{commentId}/likes")
-    public ResponseEntity<CreateCommentLikeResp> createCommentLike(@PathVariable Long commentId,@SessionAttribute("로그인 유저") Long userId){
-
+    public ResponseEntity<CreateCommentLikeResp> createCommentLike(
+            @PathVariable Long commentId,
+            @SessionAttribute("로그인 유저") Long userId
+    ){
         return ResponseEntity.ok(likeService.createCommentLike(userId,commentId));
     }
 
+    //댓글 좋아요 조회
     @GetMapping("/comments/{commentId}/likes")
-    public ResponseEntity<GetCommentLikeCountResp> getAllCommentLikes(@PathVariable Long commentId){
-
+    public ResponseEntity<GetCommentLikeCountResp> getAllCommentLikes(
+            @PathVariable Long commentId
+    ){
         return ResponseEntity.ok(likeService.commentLikeCount(commentId));
     }
 }

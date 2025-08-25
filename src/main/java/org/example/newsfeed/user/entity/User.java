@@ -15,7 +15,7 @@ public class User extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String userId; // 이걸 이메일 형식으로 받을거다
+    private String userId; // 이메일 형식
 
     @Column(nullable = false)
     private String userName;
