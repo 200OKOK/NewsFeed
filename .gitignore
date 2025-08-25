@@ -16,6 +16,7 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+.DS_Store
 
 ### IntelliJ IDEA ###
 .idea
@@ -35,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/src/main/resources/application-local.yml
+/src/main/resources/application-example.yml
